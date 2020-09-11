@@ -3,8 +3,8 @@ import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 import Home from "../views/Home";
 import Register from "../views/Register";
-import Test1 from "../views/Test1";
-import Test2 from "../views/Test2";
+import Account from "../views/Account";
+import Permission from "../views/Permission";
 
 Vue.use(VueRouter)
 
@@ -27,14 +27,14 @@ const routes = [
         component: Home,
         children:[
             {
-                path: '/test1',
+                path: '/account',
                 name: '选项1',
-                component: Test1
+                component: Account
             },
             {
-                path: '/test2',
+                path: '/permission',
                 name: '选项2',
-                component: Test2
+                component: Permission
             },
         ]
     },

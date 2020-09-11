@@ -55,7 +55,7 @@
             }
         },
         mounted() { //页面初始化（设置一个所有角色都能访问的页面）
-                this.$router.push('/test1');
+                this.$router.push('/account');
         },
         computed:{
              routes(){
