@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="height: 100%;padding: 0px;margin: 0px;">
         <el-container>
             <el-header class="homeHeader">
                 <div class="title">幼儿园室内定位系统</div>
@@ -15,7 +15,7 @@
                 </el-dropdown>
             </el-header>
             <el-container>
-                <el-aside width="200px">
+                <el-aside style="width:200px;height: 100vh;background-color:#545c64">
                     <el-menu
                             default-active="2"
                             class="el-menu-vertical-demo"
@@ -37,7 +37,11 @@
                     <el-main>
                         <router-view/>
                     </el-main>
-                    <el-footer>Footer</el-footer>
+                    <el-footer>
+                        <p style="text-align: center;margin-top: 0px">
+                            2020 @ 廖冠昌.
+                        </p>
+                    </el-footer>
                 </el-container>
             </el-container>
         </el-container>
@@ -113,4 +117,5 @@
         color: #fbfbfc;
         font-size: 15px;
     }
+
 </style>
