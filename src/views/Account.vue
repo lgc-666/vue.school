@@ -52,12 +52,12 @@
         <el-dialog :title="'操作账号：'+account" :visible.sync="dialogFormVisible" width="400px">
             <el-form :model="form">
                 <el-form-item label="请输入新密码">
-                    <el-input v-model="form.name"></el-input>
+                    <el-input v-model="form.newpassword"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+                <el-button type="primary" @click="updatePassword">确 定</el-button>
             </div>
         </el-dialog>
 
@@ -75,9 +75,10 @@
                 dialogFormVisible: false,
                 formLabelWidth: '30px',
                 form: {
-                    name: '',
+                    newpassword: '',
                 },
-                account:''
+                account:'',
+                user:null
             }
         },
         mounted () {
@@ -97,6 +98,7 @@
                             add.status2 = '0'
                             add.status3 = '0'
                             add.username = resp.data[i].username
+                            add.user=resp.data[i]
                             for (let j = 0; j < resp.data[i].role.length; j++){
                                 console.log('值4是:' + resp.data[i].role[j].rid)
                                 if (resp.data[i].role[j].rid===1) {
@@ -123,6 +125,20 @@
             changePassword(row){
                 this.dialogFormVisible = true
                 this.account=row.username
+                this.user=row.user.uid
+                console.log('值是:' + this.user)
+            },
+
+            updatePassword(){
+                this.putRequest('/updatePassword',{newpassword:this.form.newpassword,uid:this.user}).then(resp => {
+
+                    if (resp.success) {
+                        this.$message.success(resp.data)
+                    } else {
+                        this.$message.error(JSON.stringify(resp.data));
+                    }
+                })
+                this.dialogFormVisible = false
             },
 
             changeSwitch (row) {

@@ -6,7 +6,6 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
 import {postKeyValueRequest} from "./utils/api";
-import {postRequest} from "./utils/api";
 import {getRequest} from "./utils/api";
 import {putRequest} from "./utils/api";
 import {deleteRequest} from "./utils/api";
@@ -15,9 +14,7 @@ import './permission' // 权限
 import 'font-awesome/css/font-awesome.min.css'
 import axios from 'axios'
 
-
 Vue.prototype.postKeyValueRequest = postKeyValueRequest;
-Vue.prototype.postRequest = postRequest;
 Vue.prototype.putRequest = putRequest;
 Vue.prototype.getRequest = getRequest;
 Vue.prototype.deleteRequest = deleteRequest;

@@ -53,17 +53,9 @@ export const postKeyValueRequest=(url,params)=>{  //只是登录用（Spring Sec
              }
              return ret;
         }],
-        header:{
-            'Content-Type':'application/x-www-form-urlencoded'
-        }
-    })
-}
-
-export const postRequest=(url,parms)=>{
-    return axios({
-        method: 'post',
-        url: `${base}${url}`,
-        data: parms
+        //header:{
+         //   'Content-Type':'application/x-www-form-urlencoded'
+        //}
     })
 }
 
@@ -72,6 +64,13 @@ export const putRequest=(url,parms)=>{
         method: 'put',
         url: `${base}${url}`,
         data: parms,
+        transformRequest:[function (data) {
+            let ret = '';
+            for (let i in data){
+                ret+=encodeURIComponent(i)+'='+encodeURIComponent(data[i])+'&'
+            }
+            return ret;
+        }],
     })
 }
 
@@ -79,7 +78,14 @@ export const getRequest=(url,parms)=>{
     return axios({
         method: 'get',
         url: `${base}${url}`,
-        data: parms
+        data: parms,
+        transformRequest:[function (data) {
+            let ret = '';
+            for (let i in data){
+                ret+=encodeURIComponent(i)+'='+encodeURIComponent(data[i])+'&'
+            }
+            return ret;
+        }],
     })
 }
 
@@ -87,6 +93,13 @@ export const deleteRequest=(url,parms)=>{
     return axios({
         method: 'delete',
         url: `${base}${url}`,
-        data: parms
+        data: parms,
+        transformRequest:[function (data) {
+            let ret = '';
+            for (let i in data){
+                ret+=encodeURIComponent(i)+'='+encodeURIComponent(data[i])+'&'
+            }
+            return ret;
+        }],
     })
 }
