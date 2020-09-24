@@ -1,5 +1,10 @@
 <template>
     <div>
+        <div style="width: 100%;height: 50px">
+            <el-button type="primary" round @click="btn2" style="float: left;margin-top: 5px;margin-left: 30px">刷新</el-button>
+            <el-button type="primary" round @click="btnquery" style="margin-top: 5px;float: right;margin-left: 10px;margin-right: 10px">查询信息</el-button>
+            <el-input v-model="staffdata" style="width: 250px;float: right;margin-top: 5px;" :placeholder=placeholder @focus="blurSearchFor()" @blur="blurSear" v-if="showinput"></el-input>
+        </div>
         <el-table :data="list"
                   v-loading="listLoading" border>
             <el-table-column label="账号" align="center">
@@ -65,6 +70,7 @@
 </template>
 
 <script>
+    import qs from 'qs'
     import { MessageBox } from 'element-ui'
     export default {
         name: 'Account',
@@ -78,7 +84,10 @@
                     newpassword: '',
                 },
                 account:'',
-                user:null
+                user:null,
+                placeholder: '可以根据姓名,工号,用户名模糊查询',
+                showinput: true,
+                staffdata:''
             }
         },
         mounted () {
@@ -131,7 +140,6 @@
 
             updatePassword(){
                 this.putRequest('/updatePassword',{newpassword:this.form.newpassword,uid:this.user}).then(resp => {
-
                     if (resp.success) {
                         this.$message.success(resp.data)
                     } else {
@@ -142,51 +150,32 @@
             },
 
             changeSwitch (row) {
-                this.rowsdata.username = this.$store.state.staffname
-                this.rowsdata.pid = row.pid
-                console.log(row.pid)
-                console.log(this.rowsdata.username)
-                let rowsdatas = this.$qs.stringify(this.rowsdata)
-                if (row.status === '100') {
-                    console.log(row.status)
-                    this.$axios({
-                        method: 'post',
-                        url: 'http://47.112.255.207:8081/addPermission',
-                        data: rowsdatas,
-                        Headers: {
-                            'Authorization': ' '
-                        },
-                        crossDomain: true
-                    }).then(res => {
-                        console.log(res.data.code)
-                        if (res.data.code === 200) {
-                            console.log('修改成功')
-                        }
-                        if (res.data.code === 402) {
-                            alert('操作失败,请联系管理员')
-                        }
-                    }).catch(err => {
-                        console.log(err)
-                    })
+                this.roleIds=[row.status1,row.status2,row.status3]+''
+                this.user=row.user.uid
+                this.putRequest('/updateUser',{roleIds:this.roleIds,uid:this.user}).then(resp => {
+                    if (resp.success) {
+                        this.$message.success(resp.data)
+                    } else {
+                        this.$message.error(JSON.stringify(resp.data));
+                    }
+                })
+                this.dialogFormVisible = false
+            },
+
+            blurSearchFor () {
+                if (this.placeholder === '根据设备id查询设备,支持模糊查找') {
+                    this.placeholder = ''
                 }
-                if (row.status === '0') {
-                    var param = {username: this.$store.state.staffname, pid: row.pid}
-                    this.$axios.delete('http://47.112.255.207:8081/deletePermission', {params: param}).then(res => {
-                        if (res.data.code === 200) {
-                            console.log('撤权成功')
-                        }
-                        if (res.data.code === 402) {
-                            alert('操作失败,请联系管理员')
-                        }
-                        if (res.data.code === 444) {
-                            alert('未登录')
-                            this.$router.push('/')
-                        }
-                    }).catch(error => {
-                        console.log('失败')
-                        console.log(error)
-                    })
-                }
+            },
+            blurSear () {
+                this.placeholder = '根据设备id查询设备,支持模糊查找'
+            },
+            btn2 () {
+                this.list=[],
+                this.init()
+            },
+            btnquery () {
+
             }
         }
     }

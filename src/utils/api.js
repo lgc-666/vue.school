@@ -45,7 +45,7 @@ export const postKeyValueRequest=(url,params)=>{  //只是登录用（Spring Sec
     return axios({
         method:'post',
         url:`${base}${url}`,
-        data:params,
+        params:params,
         transformRequest:[function (data) {
              let ret = '';
              for (let i in data){
@@ -60,10 +60,11 @@ export const postKeyValueRequest=(url,params)=>{  //只是登录用（Spring Sec
 }
 
 export const putRequest=(url,parms)=>{
+    console.log('是:' + parms)
     return axios({
         method: 'put',
         url: `${base}${url}`,
-        data: parms,
+        params: parms,
         transformRequest:[function (data) {
             let ret = '';
             for (let i in data){
@@ -78,7 +79,7 @@ export const getRequest=(url,parms)=>{
     return axios({
         method: 'get',
         url: `${base}${url}`,
-        data: parms,
+        params: parms,
         transformRequest:[function (data) {
             let ret = '';
             for (let i in data){
@@ -93,7 +94,7 @@ export const deleteRequest=(url,parms)=>{
     return axios({
         method: 'delete',
         url: `${base}${url}`,
-        data: parms,
+        params: parms,
         transformRequest:[function (data) {
             let ret = '';
             for (let i in data){

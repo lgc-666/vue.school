@@ -31,6 +31,7 @@
 <script>
    // import {postKeyValueRequest} from "../utils/api";
    import img1 from "../assets/bg2.jpg";
+   import {initMenu} from "../utils/menus";
     export default {
         name: "Login",
         data() {

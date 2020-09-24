@@ -27,17 +27,13 @@ const routes = [
         component: Home,
         children:[
             {
-                path: '/account',
-                name: '选项1',
-                component: Account
-            },
-            {
                 path: '/permission',
-                name: '选项2',
+                name: 'Permission',
                 component: Permission
             },
         ]
     },
+
 
 ]
 

@@ -15,9 +15,9 @@ router.beforeEach((to, from, next) => {
     else{
         if(sessionStorage.getItem('user'))
         {
-                initMenu(router,store);
-                console.log("加载菜单完毕");
-                next();
+            initMenu(router,store);
+            console.log("加载菜单完毕");
+            next();
         }else {
             next('/');
             Message.error({message:'尚未登录，请登录'});
