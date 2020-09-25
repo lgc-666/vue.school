@@ -2,7 +2,7 @@
     <div style="height: 100%;padding: 0px;margin: 0px;">
         <el-container>
             <el-header class="homeHeader">
-                <div class="title">幼儿园室内定位系统</div>
+                <div class="title">室内定位系统</div>
                 <el-dropdown @command="commandHandler" class="userInfo">
                     <span class="el-dropdown-link">
                         {{user.username}}<i class="el-icon-arrow-down el-icon--right"></i>

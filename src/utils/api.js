@@ -5,10 +5,12 @@ axios.interceptors.response.use(success=>{
     console.log('状态码是:' + success.status)
     console.log('过滤器-响应值是:' + success.data.data)
     console.log('过滤器-响应值是:' + JSON.stringify(success.data))
-    if(success.status && success.status == 200 && success.data.code == 401 && success.data.code == 403)
+    if(success.status && success.status == 200)
     {
-        Message.error({message: success.data.data})
-        return;
+        if(success.data.code == 401 || success.data.code == 403){
+            Message.error({message: success.data.data})
+            return;
+        }
     }
     //if(success.data.message){
       //  Message.success({message:success.data.message})

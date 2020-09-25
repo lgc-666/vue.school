@@ -15,7 +15,7 @@
                     <el-button  @click="changePassword(scope.row)">更改</el-button>
                 </template>
             </el-table-column>
-            <el-table-column label="联系人" align="center">
+            <el-table-column label="访客" align="center">
                 <template slot-scope="scope">
                     <el-switch
                             v-model="scope.row.status1"
@@ -27,7 +27,7 @@
                     </el-switch>
                 </template>
             </el-table-column>
-            <el-table-column label="教师" align="center">
+            <el-table-column label="工作人员" align="center">
                 <template slot-scope="scope">
                     <el-switch
                             v-model="scope.row.status2"

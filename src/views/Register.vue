@@ -16,12 +16,12 @@
             </el-form-item>
             <el-form-item>
                 <el-radio-group v-model="registerForm.radio" @change="changeStatus">
-                    <el-radio label="1" border>联系人</el-radio>
-                    <el-radio label="2" border>教师</el-radio>
+                    <el-radio label="1" border>访客</el-radio>
+                    <el-radio label="2" border>工作人员</el-radio>
                 </el-radio-group>
             </el-form-item>
-            <el-form-item  style="margin-top: 0px" prop="studentname">
-                <el-input :disabled="btnstatus" type="text" v-model="registerForm.studentname" auto-complete="off" placeholder="绑定的学生名"></el-input>
+            <el-form-item  style="margin-top: 0px" prop="mac">
+                <el-input :disabled="btnstatus" type="text" v-model="registerForm.mac" auto-complete="off" placeholder="绑定的mac地址"></el-input>
             </el-form-item>
             <el-button type="primary" style="width: 100%;margin-bottom: 10px;margin-top: 0px" @click="submitregister">确定</el-button>
             <el-button style="width: 100%;margin-left: 0px" @click="resetForm">重置</el-button>
@@ -63,8 +63,8 @@
                 }
             };
             var validatePass3 = (rule, value, callback) => {
-                if (this.btnstatus==false&&value === '') {
-                    callback(new Error('请输入要绑定的学生名'));
+                if (value === '') {
+                    callback(new Error('请输入要绑定的mac地址'));
                 }else {
                     callback();
                 }
@@ -74,14 +74,14 @@
                     username:'',
                     password:'',
                     checkPass:'',
-                    studentname:'',
+                    mac:'',
                     radio: '1'
                 },
                 rules:{
                     username: [{required: true, message: '用户名为必填项',trigger:'blur'}],
                     password: [{validator: validatePass,required: true,trigger: 'blur'}],
                     checkPass: [{validator: validatePass2,required: true,trigger: 'blur'}],
-                    studentname: [{validator: validatePass3,trigger:'blur'}],
+                    mac: [{validator: validatePass3,required: true,trigger:'blur'}],
                 },
                 checked: true,
                 //radio1: '1',
@@ -94,7 +94,7 @@
                 this.$refs.registerForm.validate((valid) => {   //数字校验：有输入才请求接口
                     if (valid) {
                         //alert('submit!');
-                        postKeyValueRequest('/register', this.registerForm).then(resp =>{
+                        this.postKeyValueRequest('/register', this.registerForm).then(resp =>{
                             if(resp){
                                 this.$message.success(JSON.stringify(resp.data));
                                 this.$router.replace('/'); //页面跳转
@@ -117,7 +117,8 @@
                     this.btnstatus=false
                 }
                 else if(value=='2'){
-                    this.btnstatus=true
+                    //this.btnstatus=true
+                    this.btnstatus=false
                 }
             },
             login() {

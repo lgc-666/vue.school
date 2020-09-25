@@ -13,8 +13,8 @@
              </el-form-item>
              <el-form-item>
                  <el-radio-group v-model="loginForm.radio" @change="changeStatus">
-                     <el-radio label="1">联系人</el-radio>
-                     <el-radio label="2">教师</el-radio>
+                     <el-radio label="1">访客</el-radio>
+                     <el-radio label="2">工作人员</el-radio>
                      <el-radio label="3">管理员</el-radio>
                  </el-radio-group>
              </el-form-item>
