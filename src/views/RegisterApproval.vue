@@ -21,6 +21,17 @@
                 </template>
             </el-table-column>
         </el-table>
+        <el-pagination
+                background
+                @current-change="handleCurrentChange"
+                @size-change="handleSizeChange"
+                layout="total, sizes, prev, pager, next, jumper"
+                :page-sizes="[4, 5, 6, 7, 8]"
+                :total="total"
+                :pages="pages"
+                :page-size="size"
+                style="margin-top: 20px;text-align: center;">
+        </el-pagination>
     </div>
 </template>
 
@@ -30,7 +41,11 @@
         data () {
             return {
                 listLoading: false,
-                list: []
+                list: [],
+                total: 0, //数据总数
+                size: 8, //每页的数据条数
+                start: 0, //默认开始页面
+                pages: 1
             }
         },
         mounted () {
@@ -38,19 +53,22 @@
         },
         methods: {
             init () {
-                this.getRequest('/listregisterApproval').then(resp => {
+                this.getRequest('/listregisterApproval',{start:this.start,size:this.size}).then(resp => {
                     if (resp.success) {
-                        for (let i = 0; i < resp.data.length; i++) {
+                        console.log('total是:' + resp.data.total)
+                        this.total = resp.data.total;
+                        this.pages = resp.data.pages;
+                        for (let i = 0; i < resp.data.list.length; i++) {
                             let add = {}
-                            if(resp.data[i].rid=='1'){
+                            if(resp.data.list[i].rid=='1'){
                                 add.rolename='访客'
                             }
                             else{
                                 add.rolename='工作人员'
                             }
-                            add.name = resp.data[i].username
-                            add.mac = resp.data[i].mac
-                            add.id = resp.data[i].id
+                            add.name = resp.data.list[i].username
+                            add.mac = resp.data.list[i].mac
+                            add.id = resp.data.list[i].id
                             this.list.push(add)
                         }
                     } else {
@@ -81,7 +99,25 @@
             btn2 () {
                 this.list=[],
                 this.init()
-            }
+            },
+            /**
+             * 第n页
+             * @param pageNum
+             */
+            handleCurrentChange(pageNum) {
+                // console.log(`当前页: ${val}`);
+                this.start = pageNum;
+                this.btn2();
+            },
+            /**
+             * 每页记录数
+             * @param val
+             */
+            handleSizeChange(pageSize) {
+                // console.log(`每页 ${val} 条`);
+                this.size = pageSize;
+                this.btn2();
+            },
         }
     }
 </script>

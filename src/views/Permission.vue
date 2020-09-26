@@ -25,6 +25,17 @@
                 </template>
             </el-table-column>
         </el-table>
+        <el-pagination
+                background
+                @current-change="handleCurrentChange"
+                @size-change="handleSizeChange"
+                layout="total, sizes, prev, pager, next, jumper"
+                :page-sizes="[4, 5, 6, 7, 8]"
+                :total="total"
+                :pages="pages"
+                :page-size="size"
+                style="margin-top: 20px;text-align: center;">
+        </el-pagination>
     </div>
 </template>
 
@@ -42,7 +53,11 @@
                 placeholder: '可以根据姓名,工号,用户名模糊查询',
                 showinput: true,
                 staffdata:'',
-                status:''
+                status:'',
+                total: 0, //数据总数
+                size: 8, //每页的数据条数
+                start: 0, //默认开始页面
+                pages: 1
             }
         },
         mounted () {
@@ -52,16 +67,18 @@
             init () {
                 console.log('值1是:' + this.$store.state.rid)
                 let rid = this.$store.state.rid
-                this.getRequest('/editRole',{rid:rid}).then(resp => {
-                    console.log('值2是:' + resp.data["all_permission"].length)
+                this.getRequest('/editRole',{rid:rid,start:this.start,size:this.size}).then(resp => {
+                    console.log('值2是:' + resp.data["all_permission"].list.length)
                     if (resp.success) {
-                        for (let i = 0; i < resp.data["all_permission"].length; i++) {
+                        this.total = resp.data["all_permission"].total;
+                        this.pages = resp.data["all_permission"].pages;
+                        for (let i = 0; i < resp.data["all_permission"].list.length; i++) {
                             let add = {}
-                            add.path=resp.data["all_permission"][i].path
-                            add.name = resp.data["all_permission"][i].name
-                            add.pid=resp.data["all_permission"][i].pid
-                            for (let j = 0; j < resp.data["role_permission"].length; j++) {
-                                  if(resp.data["all_permission"][i].pid==resp.data["role_permission"][j].pid){
+                            add.path=resp.data["all_permission"].list[i].path
+                            add.name = resp.data["all_permission"].list[i].name
+                            add.pid=resp.data["all_permission"].list[i].pid
+                            for (let j = 0; j < resp.data["role_permission"].list.length; j++) {
+                                  if(resp.data["all_permission"].list[i].pid==resp.data["role_permission"].list[j].pid){
                                       add.status1='1'
                                       break
                                   }
@@ -99,7 +116,25 @@
             backup(){
                 this.$store.state.rid = ''
                 this.$router.replace("/role");  //页面跳转
-            }
+            },
+            /**
+             * 第n页
+             * @param pageNum
+             */
+            handleCurrentChange(pageNum) {
+                // console.log(`当前页: ${val}`);
+                this.start = pageNum;
+                this.btn2();
+            },
+            /**
+             * 每页记录数
+             * @param val
+             */
+            handleSizeChange(pageSize) {
+                // console.log(`每页 ${val} 条`);
+                this.size = pageSize;
+                this.btn2();
+            },
         }
     }
 </script>

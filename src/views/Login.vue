@@ -4,7 +4,7 @@
             <img :src="img" width="100%" height="100%" alt="" />
         </div>
          <el-form :rules="rules" :model="loginForm" class="loginContainer" ref="loginFrom">
-             <h2 class="loginTitle">幼儿园室内定位系统</h2>
+             <h2 class="loginTitle">室内定位系统</h2>
              <el-form-item prop="username">
                  <el-input type="text" v-model="loginForm.username" auto-complete="off" placeholder="请输入用户名"></el-input>
              </el-form-item>

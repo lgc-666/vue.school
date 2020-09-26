@@ -52,7 +52,17 @@
                 </template>
             </el-table-column>
         </el-table>
-
+        <el-pagination
+                background
+                @current-change="handleCurrentChange"
+                @size-change="handleSizeChange"
+                layout="total, sizes, prev, pager, next, jumper"
+                :page-sizes="[4, 5, 6, 7, 8]"
+                :total="total"
+                :pages="pages"
+                :page-size="size"
+                style="margin-top: 20px;text-align: center;">
+        </el-pagination>
 
         <el-dialog :title="'操作账号：'+account" :visible.sync="dialogFormVisible" width="400px">
             <el-form :model="form">
@@ -87,7 +97,11 @@
                 user:null,
                 placeholder: '可以根据姓名,工号,用户名模糊查询',
                 showinput: true,
-                staffdata:''
+                staffdata:'',
+                total: 0, //数据总数
+                size: 8, //每页的数据条数
+                start: 0, //默认开始页面
+                pages: 1
             }
         },
         mounted () {
@@ -95,30 +109,31 @@
         },
         methods: {
             init () {
-                this.getRequest('/listUser').then(resp => {
+                this.getRequest('/listUser',{start:this.start,size:this.size}).then(resp => {
                     console.log('值是:' + resp.success)
                     if (resp.success) {
                         console.log('值1是:' + JSON.stringify(resp.data))
-                        console.log('值2是:' + resp.data)
-                        console.log('值3是:' + resp.data.length)
-                        for (let i = 0; i < resp.data.length; i++) {
+                        console.log('total是:' + resp.data.total)
+                        this.total = resp.data.total;
+                        this.pages = resp.data.pages;
+                        for (let i = 0; i < resp.data.list.length; i++) {
                             let add = {}
                             add.status1 = '0'
                             add.status2 = '0'
                             add.status3 = '0'
-                            add.username = resp.data[i].username
-                            add.user=resp.data[i]
-                            for (let j = 0; j < resp.data[i].role.length; j++){
-                                console.log('值4是:' + resp.data[i].role[j].rid)
-                                if (resp.data[i].role[j].rid===1) {
+                            add.username = resp.data.list[i].username
+                            add.user=resp.data.list[i]
+                            for (let j = 0; j < resp.data.list[i].role.length; j++){
+                                console.log('值4是:' + resp.data.list[i].role[j].rid)
+                                if (resp.data.list[i].role[j].rid===1) {
                                     add.status1 = '1'
-                                    console.log('家长默认开启状态：'+add.status1)
+                                    console.log('访客默认开启状态：'+add.status1)
                                 }
-                                else if(resp.data[i].role[j].rid===2){
+                                else if(resp.data.list[i].role[j].rid===2){
                                     add.status2 = '2'
-                                    console.log('教师默认开启状态：'+add.status2)
+                                    console.log('工作人员默认开启状态：'+add.status2)
                                 }
-                                else if(resp.data[i].role[j].rid===3){
+                                else if(resp.data.list[i].role[j].rid===3){
                                     add.status3 = '3'
                                     console.log('管理员默认开启状态：'+add.status3)
                                 }
@@ -176,7 +191,25 @@
             },
             btnquery () {
 
-            }
+            },
+            /**
+             * 第n页
+             * @param pageNum
+             */
+            handleCurrentChange(pageNum) {
+                // console.log(`当前页: ${val}`);
+                this.start = pageNum;
+                this.btn2();
+            },
+            /**
+             * 每页记录数
+             * @param val
+             */
+            handleSizeChange(pageSize) {
+                // console.log(`每页 ${val} 条`);
+                this.size = pageSize;
+                this.btn2();
+            },
         }
     }
 </script>
