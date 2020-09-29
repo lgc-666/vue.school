@@ -2,7 +2,7 @@
     <div>
         <div style="width: 100%;height: 50px">
             <el-button type="primary" icon="el-icon-back" circle @click="backup" style="background-color: white;color: black;border: 0;float: left;margin-top: 0px;margin-left: 0px;font-size:x-large"></el-button>
-            <el-button type="primary" round @click="btn2" style="float: left;margin-top: 5px;margin-left: 30px">刷新</el-button>
+            <el-button type="primary" icon="el-icon-refresh-right" round @click="btn2" style="float: left;margin-top: 5px;margin-left: 30px">刷新</el-button>
        </div>
         <el-table :data="list"
                   v-loading="listLoading" border>

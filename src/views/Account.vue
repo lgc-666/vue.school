@@ -1,7 +1,7 @@
 <template>
     <div>
         <div style="width: 100%;height: 50px">
-            <el-button type="primary" round @click="btn2" style="float: left;margin-top: 5px;margin-left: 30px">刷新</el-button>
+            <el-button type="primary" round @click="btn2" icon="el-icon-refresh-right" style="float: left;margin-top: 5px;margin-left: 30px">刷新</el-button>
             <el-button type="primary" round @click="btnquery" style="margin-top: 5px;float: right;margin-left: 10px;margin-right: 10px">查询信息</el-button>
             <el-input v-model="staffdata" style="width: 250px;float: right;margin-top: 5px;" :placeholder=placeholder @focus="blurSearchFor()" @blur="blurSear" v-if="showinput"></el-input>
         </div>
@@ -82,6 +82,9 @@
 <script>
     import qs from 'qs'
     import { MessageBox } from 'element-ui'
+    import {initMenu} from "../utils/menus";
+    import router from "../router";
+    import store from "../store";
     export default {
         name: 'Account',
         data () {
