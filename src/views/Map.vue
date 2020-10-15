@@ -144,8 +144,8 @@
                 let tm = new fengmap.FMTextMarker({
                     name: x1+','+y1,
                     x: x2,
-                    y: y2+0.6,
-                    height:10,
+                    y: y2+1,
+                    height:5,
                     //文字标注样式设置
                     fillcolor: "0,0,0", //填充色
                     fontsize:15, //字体大小

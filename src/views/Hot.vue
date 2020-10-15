@@ -88,31 +88,10 @@
                 console.log('坐标已显示');
             },
 
-            createhot(){
-                //热力图对象
-                let heatmapInstance = fengmap.FMHeatMap.create(this.map, {
-                    //热点半径
-                    radius: 20,
-                    //热力图透明度
-                    opacity: .5,
-                    //热力点value的最大值
-                    max: 100
-                });
-                //增加热点
-                heatmapInstance.addPoints({
-                    "x": 12961664.4327246,
-                    "y": 4861863.64318839,
-                    "value": 100});
-                //热力图应用到对应楼层
-                let groupLayer = this.map.getFMGroup(this.map.focusGroupID);
-                groupLayer.applyHeatMap(heatmapInstance);
-            },
-
-
             locationMarker2(){
                 this.getRequest('/getDBlocationNotRepeat').then(resp => {
                     console.log('值2是:' + resp.data[0].x)
-                    //坐标转换
+                    let data=[]
                     //原始坐标
                     let origonParas = [];
                     origonParas[0] = {'x':0, 'y':0};
@@ -125,11 +104,21 @@
                     targetParas[1] = {'x':12639290.783923365,'y':2556606.7894323496};
                     targetParas[2] = {'x':12639230.992849482,'y':2556636.8715831297};
 
+                    //热力图对象
+                    let heatmapInstance = fengmap.FMHeatMap.create(this.map, {
+                        //热点半径
+                        radius: 20,
+                        //热力图透明度
+                        opacity: .5,
+                        //热力点value的最大值
+                        max: 100
+                    });
                     if (resp.success) {
                         for (let i = 0; i < resp.data.length; i++) {
                             //坐标转换结果
                             console.log('转换后:' + transform(origonParas,targetParas,resp.data[i].x,resp.data[i].y))
                             let toTran =transform(origonParas,targetParas,resp.data[i].x,resp.data[i].y);
+
                             // 实例化定位标注对象
                             let locationMarker = new fengmap.FMLocationMarker({
                                 url: img,
@@ -145,36 +134,23 @@
                                 groupID:this.map.focusGroupID  //设置定位点所在楼层
                             });
                             locationMarker.alwaysShow();
-                            //locationMarker.rotate(5);
-                            this.locationMarker3(resp.data[i].x,resp.data[i].y,toTran.x,toTran.y);
-
+                            //增加热点(点越多颜色越深，最深为红色)
+                            data[i]={
+                                x: toTran.x,
+                                y: toTran.y,
+                                value: 50
+                            }
                         }
+                        heatmapInstance.addPoints(data);
+                        //热力图应用到对应楼层
+                        let groupLayer = this.map.getFMGroup(this.map.focusGroupID);
+                        groupLayer.applyHeatMap(heatmapInstance);
                     } else {
                         this.$message.error(JSON.stringify(resp.data));
                     }
                 })
             },
 
-
-            locationMarker3(x1,y1,x2,y2){
-                let groupLayer = this.map.getFMGroup(this.map.focusGroupID);
-                let layer = new fengmap.FMTextMarkerLayer();   //实例化TextMarkerLayer
-                groupLayer.addLayer(layer);    //添加文本标注层到模型层。否则地图上不会显示
-                //图标标注对象，默认位置为该楼层中心点
-                let tm = new fengmap.FMTextMarker({
-                    name: x1+','+y1,
-                    x: x2,
-                    y: y2+0.6,
-                    height:10,
-                    //文字标注样式设置
-                    fillcolor: "0,0,0", //填充色
-                    fontsize:15, //字体大小
-                    strokecolor: "255,255,0", //边框色
-                    alpha: 0.5   //文本标注透明度,
-                });
-                layer.addMarker(tm);  //文本标注层添加文本Marker
-                tm.alwaysShow();    // 在marker载入完成后，设置 "一直可见"，不被其他层遮挡
-            },
         }
     }
 </script>
