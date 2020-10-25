@@ -121,11 +121,11 @@
 
                             // 实例化定位标注对象
                             let locationMarker = new fengmap.FMLocationMarker({
-                                url: img,
-                                size:28,  //设置图片显示尺寸
+                                //url: img,
+                                //size:28,  //设置图片显示尺寸
                                 height:0,  //marker标注高度
                             });
-                            this.map.addLocationMarker(locationMarker);
+                            //this.map.addLocationMarker(locationMarker);
 
                             //实际图上的x、y需要经过坐标转换才能变成屏幕上的大坐标（转换方法看桌面的图）
                             locationMarker.setPosition({
