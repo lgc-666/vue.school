@@ -9,22 +9,28 @@
         <el-table :data="list"
                   v-loading="listLoading" border>
             <el-table-column label="区域名" align="center">
-                <template slot-scope="scope">{{scope.row.adress}}</template>
+                <template slot-scope="scope">{{scope.row.address}}</template>
             </el-table-column>
-            <el-table-column label="x1" align="center">
-                <template slot-scope="scope">{{scope.row.x1}}</template>
+            <el-table-column label="inJudge" align="center">
+                <template slot-scope="scope">{{scope.row.inJudge}}</template>
             </el-table-column>
-            <el-table-column label="y1" align="center">
-                <template slot-scope="scope">{{scope.row.y1}}</template>
+            <el-table-column label="进入时间" align="center">
+                <template slot-scope="scope">{{scope.row.in_time}}</template>
             </el-table-column>
-            <el-table-column label="y2" align="center">
-                <template slot-scope="scope">{{scope.row.y2}}</template>
+            <el-table-column label="离开时间" align="center">
+                <template slot-scope="scope">{{scope.row.left_time}}</template>
             </el-table-column>
-            <el-table-column label="x2" align="center">
-                <template slot-scope="scope">{{scope.row.x2}}</template>
+            <el-table-column label="停留时间" align="center">
+                <template slot-scope="scope">{{scope.row.rt}}</template>
             </el-table-column>
-            <el-table-column label="是否为禁区" align="center">
-                <template slot-scope="scope">{{scope.row.stopjudge}}</template>
+            <el-table-column label="访问次数" align="center">
+                <template slot-scope="scope">{{scope.row.visited_times}}</template>
+            </el-table-column>
+            <el-table-column label="是否已处理" align="center">
+                <template slot-scope="scope">{{scope.row.handleJudge}}</template>
+            </el-table-column>
+            <el-table-column label="mac" align="center">
+                <template slot-scope="scope">{{scope.row.mac}}</template>
             </el-table-column>
             <el-table-column label="操作" align="center">
                 <template slot-scope="scope">
@@ -48,22 +54,22 @@
         <el-dialog  :visible.sync="dialogFormVisible" width="300px">
             <el-form :model="form" >
                 <el-form-item label="区域名">
-                    <el-input v-model="form.adress"></el-input>
+                    <el-input v-model="form.address"></el-input>
                 </el-form-item>
-                <el-form-item label="x1">
-                    <el-input v-model="form.x1"></el-input>
+                <el-form-item label="inJudge">
+                    <el-input v-model="form.inJudge"></el-input>
                 </el-form-item>
-                <el-form-item label="y1">
-                    <el-input v-model="form.y1"></el-input>
+                <el-form-item label="停留时间">
+                    <el-input v-model="form.rt"></el-input>
                 </el-form-item>
-                <el-form-item label="x2">
-                    <el-input v-model="form.x2"></el-input>
+                <el-form-item label="访问次数">
+                    <el-input v-model="form.visited_times"></el-input>
                 </el-form-item>
-                <el-form-item label="y2">
-                    <el-input v-model="form.y2"></el-input>
+                <el-form-item label="是否已处理">
+                    <el-input v-model="form.handleJudge"></el-input>
                 </el-form-item>
-                <el-form-item label="是否为禁区">
-                    <el-input v-model="form.stopjudge"></el-input>
+                <el-form-item label="mac">
+                    <el-input v-model="form.mac"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -75,22 +81,28 @@
         <el-dialog  :visible.sync="dialogFormVisible2" width="300px">
             <el-form :model="form2" >
                 <el-form-item label="区域名">
-                    <el-input v-model="form2.adress" placeholder="按室内划分填写"></el-input>
+                    <el-input v-model="form2.address"></el-input>
                 </el-form-item>
-                <el-form-item label="x1">
-                    <el-input v-model="form2.x1" placeholder="左下角坐标"></el-input>
+                <el-form-item label="inJudge">
+                    <el-input v-model="form2.inJudge"></el-input>
                 </el-form-item>
-                <el-form-item label="y1">
-                    <el-input v-model="form2.y1" placeholder="左上角坐标"></el-input>
+                <el-form-item label="进入时间">
+                    <el-input v-model="form2.in_time"></el-input>
                 </el-form-item>
-                <el-form-item label="y2">
-                    <el-input v-model="form2.y2" placeholder="右上角坐标"></el-input>
+                <el-form-item label="离开时间">
+                    <el-input v-model="form2.left_time"></el-input>
                 </el-form-item>
-                <el-form-item label="x2">
-                    <el-input v-model="form2.x2" placeholder="右下角坐标"></el-input>
+                <el-form-item label="停留时间">
+                    <el-input v-model="form2.rt"></el-input>
                 </el-form-item>
-                <el-form-item label="是否为禁区">
-                    <el-input v-model="form2.stopjudge" placeholder="取值为0或1"></el-input>
+                <el-form-item label="访问次数">
+                    <el-input v-model="form2.visited_times"></el-input>
+                </el-form-item>
+                <el-form-item label="是否已处理">
+                    <el-input v-model="form2.handleJudge"></el-input>
+                </el-form-item>
+                <el-form-item label="mac">
+                    <el-input v-model="form2.mac"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -103,7 +115,7 @@
 
 <script>
     export default {
-        name: "Class",
+        name: "StopVisit",
         data () {
             return {
                 listLoading: false,
@@ -115,24 +127,28 @@
                 size: 8, //每页的数据条数
                 start: 0, //默认开始页面
                 pages: 1,
-                classid:'',
+                stop_visit_id:'',
                 dialogFormVisible: false,
                 dialogFormVisible2: false,
                 form: {
-                    adress: '',
-                    stopjudge:'',
-                    x1:'',
-                    x2:'',
-                    y1:'',
-                    y2:'',
+                    address: '',
+                    inJudge:'',
+                    in_time:'',
+                    left_time:'',
+                    rt:'',
+                    visited_times:'',
+                    handleJudge:'',
+                    mac:''
                 },
                 form2: {
-                    adress: '',
-                    stopjudge:'',
-                    x1:'',
-                    x2:'',
-                    y1:'',
-                    y2:'',
+                    address: '',
+                    inJudge:'',
+                    in_time:'',
+                    left_time:'',
+                    rt:'',
+                    visited_times:'',
+                    handleJudge:'',
+                    mac:''
                 },
             }
         },
@@ -141,20 +157,22 @@
         },
         methods: {
             init () {
-                this.getRequest('/listClass',{start:this.start,size:this.size}).then(resp => {
+                this.getRequest('/listStopVisit',{start:this.start,size:this.size}).then(resp => {
                     if (resp.success) {
                         console.log('total是:' + resp.data.total)
                         this.total = resp.data.total;
                         this.pages = resp.data.pages;
                         for (let i = 0; i < resp.data.list.length; i++) {
                             let add = {}
-                            add.stopjudge = resp.data.list[i].stopjudge
-                            add.adress = resp.data.list[i].adress
-                            add.x1 = resp.data.list[i].x1
-                            add.x2 = resp.data.list[i].x2
-                            add.y1 = resp.data.list[i].y1
-                            add.y2 = resp.data.list[i].y2
-                            add.classid = resp.data.list[i].classid
+                            add.inJudge = resp.data.list[i].injudge
+                            add.address = resp.data.list[i].address
+                            add.in_time = resp.data.list[i].inTime
+                            add.left_time = resp.data.list[i].leftTime
+                            add.rt = resp.data.list[i].rt
+                            add.visited_times = resp.data.list[i].visitedTimes
+                            add.handleJudge = resp.data.list[i].handlejudge
+                            add.mac = resp.data.list[i].mac
+                            add.stop_visit_id = resp.data.list[i].stop_visit_id
                             this.list.push(add)
                         }
                     } else {
@@ -164,21 +182,23 @@
             },
             handlecheck(row){
                 this.dialogFormVisible = true
-                this.classid=row.classid
-                if(row.stopjudge==null){
-                    this.form.stopjudge=''
+                this.stop_visit_id=row.stop_visit_id
+                if(row.inJudge==null){
+                    this.form.inJudge=''
                 }
                 else{
-                    this.form.stopjudge=row.stopjudge
+                    this.form.inJudge=row.inJudge
                 }
-                this.form.adress=row.adress
-                this.form.x1=row.x1
-                this.form.x2=row.x2
-                this.form.y1=row.y1
-                this.form.y2=row.y2
+                this.form.address=row.address
+                this.form.in_time=row.in_time
+                this.form.left_time=row.left_time
+                this.form.rt=row.rt
+                this.form.visited_times=row.visited_times
+                this.form.handleJudge=row.handleJudge
+                this.form.mac=row.mac
             },
             handleUpdate(row){
-                this.putRequest('/updateClass',{ classid:this.classid,stopJudge:this.form.stopjudge, adress:this.form.adress, x1:this.form.x1, x2:this.form.x2, y1:this.form.y1, y2:this.form.y2}).then(resp => {
+                this.putRequest('/updateStopVisit',{ stop_visit_id:this.stop_visit_id, handleJudge:this.form.handleJudge, inJudge:this.form.inJudge, address:this.form.address, rt:this.form.rt, visited_times:this.form.visited_times, mac:this.form.mac}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()
@@ -189,7 +209,7 @@
                 this.dialogFormVisible = false
             },
             handleDelete(row){
-                this.deleteRequest('/deleteClass',{classid:row.classid}).then(resp => {
+                this.deleteRequest('/deleteStopVisit',{stop_visit_id:row.stop_visit_id}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()
@@ -215,7 +235,7 @@
 
             },
             add(){
-                this.postKeyValueRequest('/addClass',{stopJudge:this.form2.stopjudge, adress:this.form2.adress, x1:this.form2.x1, x2:this.form2.x2, y1:this.form2.y1, y2:this.form2.y2}).then(resp => {
+                this.postKeyValueRequest('/addStopVisit',{handleJudge:this.form2.handleJudge, inJudge:this.form2.inJudge, address:this.form2.address, in_time:this.form2.in_time, left_time:this.form2.left_time, rt:this.form2.rt, visited_times:this.form2.visited_times, last_in_time:this.form2.last_in_time, mac:this.form2.mac}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()

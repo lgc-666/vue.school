@@ -8,23 +8,14 @@
         </div>
         <el-table :data="list"
                   v-loading="listLoading" border>
-            <el-table-column label="区域名" align="center">
-                <template slot-scope="scope">{{scope.row.adress}}</template>
+            <el-table-column label="设备id" align="center">
+                <template slot-scope="scope">{{scope.row.id}}</template>
             </el-table-column>
-            <el-table-column label="x1" align="center">
-                <template slot-scope="scope">{{scope.row.x1}}</template>
+            <el-table-column label="设备操作" align="center">
+                <template slot-scope="scope">{{scope.row.changevalue}}</template>
             </el-table-column>
-            <el-table-column label="y1" align="center">
-                <template slot-scope="scope">{{scope.row.y1}}</template>
-            </el-table-column>
-            <el-table-column label="y2" align="center">
-                <template slot-scope="scope">{{scope.row.y2}}</template>
-            </el-table-column>
-            <el-table-column label="x2" align="center">
-                <template slot-scope="scope">{{scope.row.x2}}</template>
-            </el-table-column>
-            <el-table-column label="是否为禁区" align="center">
-                <template slot-scope="scope">{{scope.row.stopjudge}}</template>
+            <el-table-column label="创建时间" align="center">
+                <template slot-scope="scope">{{scope.row.gentime}}</template>
             </el-table-column>
             <el-table-column label="操作" align="center">
                 <template slot-scope="scope">
@@ -47,23 +38,14 @@
 
         <el-dialog  :visible.sync="dialogFormVisible" width="300px">
             <el-form :model="form" >
-                <el-form-item label="区域名">
-                    <el-input v-model="form.adress"></el-input>
+                <el-form-item label="设备id">
+                    <el-input v-model="form.id"></el-input>
                 </el-form-item>
-                <el-form-item label="x1">
-                    <el-input v-model="form.x1"></el-input>
+                <el-form-item label="设备操作">
+                    <el-input v-model="form.changevalue"></el-input>
                 </el-form-item>
-                <el-form-item label="y1">
-                    <el-input v-model="form.y1"></el-input>
-                </el-form-item>
-                <el-form-item label="x2">
-                    <el-input v-model="form.x2"></el-input>
-                </el-form-item>
-                <el-form-item label="y2">
-                    <el-input v-model="form.y2"></el-input>
-                </el-form-item>
-                <el-form-item label="是否为禁区">
-                    <el-input v-model="form.stopjudge"></el-input>
+                <el-form-item label="创建时间">
+                    <el-input v-model="form.gentime"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -74,23 +56,14 @@
 
         <el-dialog  :visible.sync="dialogFormVisible2" width="300px">
             <el-form :model="form2" >
-                <el-form-item label="区域名">
-                    <el-input v-model="form2.adress" placeholder="按室内划分填写"></el-input>
+                <el-form-item label="设备id">
+                    <el-input v-model="form2.id"></el-input>
                 </el-form-item>
-                <el-form-item label="x1">
-                    <el-input v-model="form2.x1" placeholder="左下角坐标"></el-input>
+                <el-form-item label="设备操作">
+                    <el-input v-model="form2.changevalue"></el-input>
                 </el-form-item>
-                <el-form-item label="y1">
-                    <el-input v-model="form2.y1" placeholder="左上角坐标"></el-input>
-                </el-form-item>
-                <el-form-item label="y2">
-                    <el-input v-model="form2.y2" placeholder="右上角坐标"></el-input>
-                </el-form-item>
-                <el-form-item label="x2">
-                    <el-input v-model="form2.x2" placeholder="右下角坐标"></el-input>
-                </el-form-item>
-                <el-form-item label="是否为禁区">
-                    <el-input v-model="form2.stopjudge" placeholder="取值为0或1"></el-input>
+                <el-form-item label="创建时间">
+                    <el-input v-model="form2.gentime"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -103,36 +76,30 @@
 
 <script>
     export default {
-        name: "Class",
+        name: "Logrecord",
         data () {
             return {
                 listLoading: false,
                 list: [],
                 showinput: true,
                 staffdata:'',
-                placeholder: '可以根据区域名模糊查询',
+                placeholder: '可以根据设备id模糊查询',
                 total: 0, //数据总数
                 size: 8, //每页的数据条数
                 start: 0, //默认开始页面
                 pages: 1,
-                classid:'',
+                logid:'',
                 dialogFormVisible: false,
                 dialogFormVisible2: false,
                 form: {
-                    adress: '',
-                    stopjudge:'',
-                    x1:'',
-                    x2:'',
-                    y1:'',
-                    y2:'',
+                    id:'',
+                    changevalue:'',
+                    gentime:''
                 },
                 form2: {
-                    adress: '',
-                    stopjudge:'',
-                    x1:'',
-                    x2:'',
-                    y1:'',
-                    y2:'',
+                    id:'',
+                    changevalue:'',
+                    gentime:''
                 },
             }
         },
@@ -141,20 +108,17 @@
         },
         methods: {
             init () {
-                this.getRequest('/listClass',{start:this.start,size:this.size}).then(resp => {
+                this.getRequest('/listLogrecord',{start:this.start,size:this.size}).then(resp => {
                     if (resp.success) {
                         console.log('total是:' + resp.data.total)
                         this.total = resp.data.total;
                         this.pages = resp.data.pages;
                         for (let i = 0; i < resp.data.list.length; i++) {
                             let add = {}
-                            add.stopjudge = resp.data.list[i].stopjudge
-                            add.adress = resp.data.list[i].adress
-                            add.x1 = resp.data.list[i].x1
-                            add.x2 = resp.data.list[i].x2
-                            add.y1 = resp.data.list[i].y1
-                            add.y2 = resp.data.list[i].y2
-                            add.classid = resp.data.list[i].classid
+                            add.id = resp.data.list[i].id
+                            add.changevalue = resp.data.list[i].changevalue
+                            add.gentime = resp.data.list[i].gentime
+                            add.logid = resp.data.list[i].logid
                             this.list.push(add)
                         }
                     } else {
@@ -164,21 +128,13 @@
             },
             handlecheck(row){
                 this.dialogFormVisible = true
-                this.classid=row.classid
-                if(row.stopjudge==null){
-                    this.form.stopjudge=''
-                }
-                else{
-                    this.form.stopjudge=row.stopjudge
-                }
-                this.form.adress=row.adress
-                this.form.x1=row.x1
-                this.form.x2=row.x2
-                this.form.y1=row.y1
-                this.form.y2=row.y2
+                this.logid=row.logid
+                this.form.changevalue=row.changevalue
+                this.form.id=row.id
+                this.form.gentime=row.gentime
             },
             handleUpdate(row){
-                this.putRequest('/updateClass',{ classid:this.classid,stopJudge:this.form.stopjudge, adress:this.form.adress, x1:this.form.x1, x2:this.form.x2, y1:this.form.y1, y2:this.form.y2}).then(resp => {
+                this.putRequest('/updateLogrecord',{ logid:this.logid, changevalue:this.form.changevalue, id:this.form.id, gentime:this.form.gentime}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()
@@ -189,7 +145,7 @@
                 this.dialogFormVisible = false
             },
             handleDelete(row){
-                this.deleteRequest('/deleteClass',{classid:row.classid}).then(resp => {
+                this.deleteRequest('/deleteLogrecord',{logid:row.logid}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()
@@ -215,7 +171,7 @@
 
             },
             add(){
-                this.postKeyValueRequest('/addClass',{stopJudge:this.form2.stopjudge, adress:this.form2.adress, x1:this.form2.x1, x2:this.form2.x2, y1:this.form2.y1, y2:this.form2.y2}).then(resp => {
+                this.postKeyValueRequest('/addLogrecord',{changevalue:this.form2.changevalue, id:this.form2.id, gentime:this.form2.gentime}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()

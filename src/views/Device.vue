@@ -8,23 +8,29 @@
         </div>
         <el-table :data="list"
                   v-loading="listLoading" border>
-            <el-table-column label="区域名" align="center">
-                <template slot-scope="scope">{{scope.row.adress}}</template>
+            <el-table-column label="设备名" align="center">
+                <template slot-scope="scope">{{scope.row.devicename}}</template>
             </el-table-column>
-            <el-table-column label="x1" align="center">
-                <template slot-scope="scope">{{scope.row.x1}}</template>
+            <el-table-column label="设备id" align="center">
+                <template slot-scope="scope">{{scope.row.id}}</template>
             </el-table-column>
-            <el-table-column label="y1" align="center">
-                <template slot-scope="scope">{{scope.row.y1}}</template>
+            <el-table-column label="设备类型" align="center">
+                <template slot-scope="scope">{{scope.row.devicetype}}</template>
             </el-table-column>
-            <el-table-column label="y2" align="center">
-                <template slot-scope="scope">{{scope.row.y2}}</template>
+            <el-table-column label="设备状态" align="center">
+                <template slot-scope="scope">{{scope.row.devicevalue}}</template>
             </el-table-column>
-            <el-table-column label="x2" align="center">
-                <template slot-scope="scope">{{scope.row.x2}}</template>
+            <el-table-column label="设备位置" align="center">
+                <template slot-scope="scope">{{scope.row.location}}</template>
             </el-table-column>
-            <el-table-column label="是否为禁区" align="center">
-                <template slot-scope="scope">{{scope.row.stopjudge}}</template>
+            <el-table-column label="心跳" align="center">
+                <template slot-scope="scope">{{scope.row.lasttime}}</template>
+            </el-table-column>
+            <el-table-column label="创建时间" align="center">
+                <template slot-scope="scope">{{scope.row.gentime}}</template>
+            </el-table-column>
+            <el-table-column label="ip" align="center">
+                <template slot-scope="scope">{{scope.row.ip}}</template>
             </el-table-column>
             <el-table-column label="操作" align="center">
                 <template slot-scope="scope">
@@ -47,23 +53,29 @@
 
         <el-dialog  :visible.sync="dialogFormVisible" width="300px">
             <el-form :model="form" >
-                <el-form-item label="区域名">
-                    <el-input v-model="form.adress"></el-input>
+                <el-form-item label="设备名">
+                    <el-input v-model="form.devicename"></el-input>
                 </el-form-item>
-                <el-form-item label="x1">
-                    <el-input v-model="form.x1"></el-input>
+                <el-form-item label="设备id">
+                    <el-input v-model="form.id"></el-input>
                 </el-form-item>
-                <el-form-item label="y1">
-                    <el-input v-model="form.y1"></el-input>
+                <el-form-item label="设备类型">
+                    <el-input v-model="form.devicetype"></el-input>
                 </el-form-item>
-                <el-form-item label="x2">
-                    <el-input v-model="form.x2"></el-input>
+                <el-form-item label="设备状态">
+                    <el-input v-model="form.devicevalue"></el-input>
                 </el-form-item>
-                <el-form-item label="y2">
-                    <el-input v-model="form.y2"></el-input>
+                <el-form-item label="设备位置">
+                    <el-input v-model="form.location"></el-input>
                 </el-form-item>
-                <el-form-item label="是否为禁区">
-                    <el-input v-model="form.stopjudge"></el-input>
+                <el-form-item label="心跳">
+                    <el-input v-model="form.lasttime"></el-input>
+                </el-form-item>
+                <el-form-item label="创建时间">
+                    <el-input v-model="form.gentime"></el-input>
+                </el-form-item>
+                <el-form-item label="ip">
+                    <el-input v-model="form.ip"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -74,23 +86,35 @@
 
         <el-dialog  :visible.sync="dialogFormVisible2" width="300px">
             <el-form :model="form2" >
-                <el-form-item label="区域名">
-                    <el-input v-model="form2.adress" placeholder="按室内划分填写"></el-input>
+                <el-form-item label="设备名">
+                    <el-input v-model="form2.devicename"></el-input>
                 </el-form-item>
-                <el-form-item label="x1">
-                    <el-input v-model="form2.x1" placeholder="左下角坐标"></el-input>
+                <el-form-item label="设备id">
+                    <el-input v-model="form2.id"></el-input>
                 </el-form-item>
-                <el-form-item label="y1">
-                    <el-input v-model="form2.y1" placeholder="左上角坐标"></el-input>
+                <el-form-item label="设备类型">
+                    <el-input v-model="form2.devicetype"></el-input>
                 </el-form-item>
-                <el-form-item label="y2">
-                    <el-input v-model="form2.y2" placeholder="右上角坐标"></el-input>
+                <el-form-item label="设备状态">
+                    <el-input v-model="form2.devicevalue"></el-input>
                 </el-form-item>
-                <el-form-item label="x2">
-                    <el-input v-model="form2.x2" placeholder="右下角坐标"></el-input>
+                <el-form-item label="设备位置">
+                    <el-input v-model="form2.location"></el-input>
                 </el-form-item>
-                <el-form-item label="是否为禁区">
-                    <el-input v-model="form2.stopjudge" placeholder="取值为0或1"></el-input>
+                <el-form-item label="心跳">
+                    <el-input v-model="form2.lasttime"></el-input>
+                </el-form-item>
+                <el-form-item label="创建时间">
+                    <el-input v-model="form2.gentime"></el-input>
+                </el-form-item>
+                <el-form-item label="ip">
+                    <el-input v-model="form2.ip"></el-input>
+                </el-form-item>
+                <el-form-item label="端口">
+                    <el-input v-model="form2.port"></el-input>
+                </el-form-item>
+                <el-form-item label="owner">
+                    <el-input v-model="form2.owner"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -103,36 +127,44 @@
 
 <script>
     export default {
-        name: "Class",
+        name: "Device",
         data () {
             return {
                 listLoading: false,
                 list: [],
                 showinput: true,
                 staffdata:'',
-                placeholder: '可以根据区域名模糊查询',
+                placeholder: '可以根据设备id模糊查询',
                 total: 0, //数据总数
                 size: 8, //每页的数据条数
                 start: 0, //默认开始页面
                 pages: 1,
-                classid:'',
+                deviceid:'',
                 dialogFormVisible: false,
                 dialogFormVisible2: false,
                 form: {
-                    adress: '',
-                    stopjudge:'',
-                    x1:'',
-                    x2:'',
-                    y1:'',
-                    y2:'',
+                    devicename:'',
+                    id:'',
+                    devicetype:'',
+                    devicevalue:'',
+                    location:'',
+                    lasttime:'',
+                    gentime:'',
+                    owner:'',
+                    ip:'',
+                    port:''
                 },
                 form2: {
-                    adress: '',
-                    stopjudge:'',
-                    x1:'',
-                    x2:'',
-                    y1:'',
-                    y2:'',
+                    devicename:'',
+                    id:'',
+                    devicetype:'',
+                    devicevalue:'',
+                    location:'',
+                    lasttime:'',
+                    gentime:'',
+                    owner:'',
+                    ip:'',
+                    port:''
                 },
             }
         },
@@ -141,20 +173,24 @@
         },
         methods: {
             init () {
-                this.getRequest('/listClass',{start:this.start,size:this.size}).then(resp => {
+                this.getRequest('/listDevice',{start:this.start,size:this.size}).then(resp => {
                     if (resp.success) {
                         console.log('total是:' + resp.data.total)
                         this.total = resp.data.total;
                         this.pages = resp.data.pages;
                         for (let i = 0; i < resp.data.list.length; i++) {
                             let add = {}
-                            add.stopjudge = resp.data.list[i].stopjudge
-                            add.adress = resp.data.list[i].adress
-                            add.x1 = resp.data.list[i].x1
-                            add.x2 = resp.data.list[i].x2
-                            add.y1 = resp.data.list[i].y1
-                            add.y2 = resp.data.list[i].y2
-                            add.classid = resp.data.list[i].classid
+                            add.devicename = resp.data.list[i].devicename
+                            add.id = resp.data.list[i].id
+                            add.devicetype = resp.data.list[i].devicetype
+                            add.devicevalue = resp.data.list[i].devicevalue
+                            add.location = resp.data.list[i].location
+                            add.lasttime = resp.data.list[i].lasttime
+                            add.gentime = resp.data.list[i].gentime
+                            add.owner = resp.data.list[i].owner
+                            add.ip = resp.data.list[i].ip
+                            add.port = resp.data.list[i].port
+                            add.deviceid = resp.data.list[i].deviceid
                             this.list.push(add)
                         }
                     } else {
@@ -164,21 +200,18 @@
             },
             handlecheck(row){
                 this.dialogFormVisible = true
-                this.classid=row.classid
-                if(row.stopjudge==null){
-                    this.form.stopjudge=''
-                }
-                else{
-                    this.form.stopjudge=row.stopjudge
-                }
-                this.form.adress=row.adress
-                this.form.x1=row.x1
-                this.form.x2=row.x2
-                this.form.y1=row.y1
-                this.form.y2=row.y2
+                this.deviceid=row.deviceid
+                this.form.devicename=row.devicename
+                this.form.id=row.id
+                this.form.devicetype=row.devicetype
+                this.form.devicevalue=row.devicevalue
+                this.form.location=row.location
+                this.form.lasttime=row.lasttime
+                this.form.ip=row.ip
+                this.form.gentime=row.gentime
             },
             handleUpdate(row){
-                this.putRequest('/updateClass',{ classid:this.classid,stopJudge:this.form.stopjudge, adress:this.form.adress, x1:this.form.x1, x2:this.form.x2, y1:this.form.y1, y2:this.form.y2}).then(resp => {
+                this.putRequest('/updateDevice',{ deviceid:this.deviceid,devicename:this.form.devicename, id:this.form.id, devicetype:this.form.devicetype, devicevalue:this.form.devicevalue, location:this.form.location, lasttime:this.form.lasttime, ip:this.form.ip, gentime:this.form.gentime}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()
@@ -189,7 +222,7 @@
                 this.dialogFormVisible = false
             },
             handleDelete(row){
-                this.deleteRequest('/deleteClass',{classid:row.classid}).then(resp => {
+                this.deleteRequest('/deleteDevice',{deviceid:row.deviceid}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()
@@ -215,7 +248,7 @@
 
             },
             add(){
-                this.postKeyValueRequest('/addClass',{stopJudge:this.form2.stopjudge, adress:this.form2.adress, x1:this.form2.x1, x2:this.form2.x2, y1:this.form2.y1, y2:this.form2.y2}).then(resp => {
+                this.postKeyValueRequest('/addDevice',{owner:this.form2.owner,port:this.form2.port,devicename:this.form2.devicename, id:this.form2.id, devicetype:this.form2.devicetype, devicevalue:this.form2.devicevalue, location:this.form2.location, lasttime:this.form2.lasttime, ip:this.form2.ip, gentime:this.form2.gentime}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()
