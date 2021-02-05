@@ -5,6 +5,14 @@ import store from './store'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
+import VCharts from 'v-charts';
+//import Antd from 'ant-design-vue'
+//import 'ant-design-vue/dist/antd.css'
+import './assets/styles/reset.css'
+import './assets/styles/border.css'
+import echarts from 'echarts'
+import qs from 'qs'
+
 import {postKeyValueRequest} from "./utils/api";
 import {getRequest} from "./utils/api";
 import {putRequest} from "./utils/api";
@@ -22,6 +30,11 @@ Vue.prototype.deleteRequest = deleteRequest;
 Vue.config.productionTip = false
 
 Vue.use(ElementUI);
+Vue.use(VCharts);
+//Vue.use(Antd);
+Vue.prototype.$echarts = echarts;
+//Vue.prototype.$qs = qs;
+
 axios.defaults.withCredentials = true;// 允许跨域携带cookie
 new Vue({
   router,
