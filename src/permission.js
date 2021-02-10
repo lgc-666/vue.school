@@ -20,7 +20,7 @@ router.beforeEach((to, from, next) => {
             next();
         }else {
             next('/');
-            Message.error({message:'尚未登录，请登录'});
+            Message.error({message:'尚未登录或登录已过期'});
         }
     }
     //NProgress.done();

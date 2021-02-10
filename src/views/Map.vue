@@ -1,7 +1,12 @@
 <template>
     <div>
         <div style="width: 100%;height: 50px">
-            <el-button type="primary" round @click="btn2" icon="el-icon-refresh-right" style="float: left;margin-top: 5px;margin-left: 30px">坐标显示/刷新</el-button>
+            <el-button type="primary" round @click="btn2" icon="el-icon-refresh-right" style="float: left;margin-top: 5px;margin-left: 30px">坐标刷新</el-button>
+            <el-button-group style="margin-top: 5px;margin-left: 370px">
+                <el-button type="info" icon="el-icon-search" @click="goto1">坐标图</el-button>
+                <el-button icon="el-icon-search" @click="goto2">热力图</el-button>
+                <el-button icon="el-icon-search" @click="goto3">轨迹图</el-button>
+            </el-button-group>
         </div>
         <div id="fmap"></div>
     </div>
@@ -28,6 +33,17 @@
             this.openMap()
         },
         methods: {
+            goto1(){
+                this.$router.replace("/map");  //页面跳转
+            },
+            goto2(){
+                this.$router.replace("/hot");  //页面跳转
+            },
+            goto3(){
+                this.$router.replace("/trave");  //页面跳转
+            },
+
+
             openMap () {
                 let fmapID = '1315702510946439169'
                 let mapOptions = {
@@ -51,6 +67,13 @@
                     //设置地图的旋转角为0度,摆正地图
                     this.map.rotateAngle=0
                 })
+                clearTimeout(this.timer);  //清除延迟执行
+
+                this.timer = setTimeout(()=>{   //设置延迟1s执行给地图加载的时间
+                    this.btn2()
+                    console.log('ok');
+                },1000);
+
             },
 
             // 加载滚动型楼层切换控件

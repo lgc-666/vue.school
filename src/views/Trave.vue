@@ -2,6 +2,11 @@
     <div>
         <div style="width: 100%;height: 50px">
             <el-button type="primary" round @click="btn2" icon="el-icon-refresh-right" style="float: left;margin-top: 5px;margin-left: 30px">刷新</el-button>
+            <el-button-group style="margin-top: 5px;margin-left: 370px">
+                <el-button icon="el-icon-search" @click="goto1">坐标图</el-button>
+                <el-button icon="el-icon-search" @click="goto2">热力图</el-button>
+                <el-button type="info" icon="el-icon-search" @click="goto3">轨迹图</el-button>
+            </el-button-group>
             <el-button type="primary" round @click="btnquery" style="margin-top: 5px;float: right;margin-left: 10px;margin-right: 90px">查询信息</el-button>
             <el-input v-model="staffdata" style="width: 250px;float: right;margin-top: 5px;" :placeholder=placeholder @focus="blurSearchFor()" @blur="blurSear" v-if="showinput"></el-input>
         </div>
@@ -34,6 +39,17 @@
             this.openMap()
         },
         methods: {
+            goto1(){
+                this.$router.replace("/map");  //页面跳转
+            },
+            goto2(){
+                this.$router.replace("/hot");  //页面跳转
+            },
+            goto3(){
+                this.$router.replace("/trave");  //页面跳转
+            },
+
+
             openMap () {
                 let fmapID = '1315702510946439169'
                 let mapOptions = {

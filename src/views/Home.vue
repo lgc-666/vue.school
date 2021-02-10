@@ -37,11 +37,6 @@
                     <el-main>
                         <router-view/>
                     </el-main>
-                    <el-footer>
-                        <p style="text-align: center;margin-top: 0px">
-                            2020 @ 廖冠昌.
-                        </p>
-                    </el-footer>
                 </el-container>
             </el-container>
         </el-container>
@@ -59,7 +54,7 @@
             }
         },
         mounted() { //页面初始化（设置一个所有角色都能访问的页面）
-                this.$router.push('/account');
+                this.$router.push('/administrators');
         },
         computed:{
              routes(){

@@ -11,6 +11,7 @@ import VCharts from 'v-charts';
 import './assets/styles/reset.css'
 import './assets/styles/border.css'
 import echarts from 'echarts'
+import BaiduMap from 'vue-baidu-map'
 import qs from 'qs'
 
 import {postKeyValueRequest} from "./utils/api";
@@ -29,6 +30,10 @@ Vue.prototype.deleteRequest = deleteRequest;
 
 Vue.config.productionTip = false
 
+Vue.use(BaiduMap, {
+  /* 申请的百度密钥，可以在百度地图官网申请 */
+  ak: 'pBbWsUqY3GHjUuOtDuoIGpFUDFmu6fd7'
+})
 Vue.use(ElementUI);
 Vue.use(VCharts);
 //Vue.use(Antd);

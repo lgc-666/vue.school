@@ -5,6 +5,9 @@ import Home from "../views/Home";
 import Register from "../views/Register";
 import Account from "../views/Account";
 import Permission from "../views/Permission";
+import Map from "../views/Map";
+import Hot from "../views/Hot";
+import Trave from "../views/Trave";
 
 Vue.use(VueRouter)
 
@@ -30,6 +33,21 @@ const routes = [
                 path: '/permission',
                 name: 'Permission',
                 component: Permission
+            },
+            {
+                path: '/map',
+                name: '坐标图',
+                component: Map
+            },
+            {
+                path: '/hot',
+                name: '热力图',
+                component: Hot
+            },
+            {
+                path: '/trave',
+                name: '轨迹图',
+                component: Trave
             },
         ]
     },
