@@ -18,7 +18,16 @@
                 <template slot-scope="scope">{{scope.row.devicetype}}</template>
             </el-table-column>
             <el-table-column label="设备状态" align="center">
-                <template slot-scope="scope">{{scope.row.devicevalue}}</template>
+                <template slot-scope="scope">
+                    <el-switch
+                            v-model="scope.row.devicevalue"
+                            active-color="#13ce66"
+                            inactive-color="#ff4949"
+                            active-value="1"
+                            inactive-value="0"
+                            @change="changeSwitch(scope.row)">
+                    </el-switch>
+                </template>
             </el-table-column>
             <el-table-column label="设备位置" align="center">
                 <template slot-scope="scope">{{scope.row.location}}</template>
@@ -279,6 +288,18 @@
                 this.size = pageSize;
                 this.btn2();
             },
+
+            //通过切换按钮更改设备状态
+            changeSwitch (row) {
+                console.log("按钮值："+row.devicevalue)
+                this.putRequest('/updateStatus',{status:row.devicevalue,id:row.id}).then(resp => {
+                    //if (resp.success) {
+                        //this.$message.success(resp.data)
+                    //} else {
+                        //this.$message.error(JSON.stringify(resp.data));
+                    //}
+                })
+            }
         }
     }
 </script>

@@ -106,6 +106,8 @@
             },
 
             btn2 () {
+                this.$router.replace("/administrators");
+                this.$router.replace("/hot");
                 this.locationMarker2()
                 console.log('坐标已显示');
             },

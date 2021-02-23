@@ -1,7 +1,7 @@
 <template>
     <div>
         <div style="width: 100%;height: 50px">
-            <el-button type="primary" round @click="btn2" icon="el-icon-refresh-right" style="float: left;margin-top: 5px;margin-left: 30px">坐标刷新</el-button>
+            <el-button type="primary" round @click="btn1" icon="el-icon-refresh-right" style="float: left;margin-top: 5px;margin-left: 30px">坐标刷新</el-button>
             <el-button-group style="margin-top: 5px;margin-left: 370px">
                 <el-button type="info" icon="el-icon-search" @click="goto1">坐标图</el-button>
                 <el-button icon="el-icon-search" @click="goto2">热力图</el-button>
@@ -111,6 +111,15 @@
                 console.log('坐标已显示');
             },
 
+            btn1 () {
+                this.$router.replace("/administrators");
+                setTimeout(() => {
+                    this.$router.replace("/map");
+                },100)
+                this.locationMarker2()
+                console.log('坐标已显示');
+            },
+
             //设坐标
             locationMarker2(){
                 this.getRequest('/getDBlocationNotRepeat').then(resp => {
@@ -147,10 +156,10 @@
                                 y: toTran.y,
                                 groupID:this.map.focusGroupID  //设置定位点所在楼层
                             });
-                            locationMarker.alwaysShow();
+                            //locationMarker.alwaysShow();
                             //locationMarker.rotate(5);
-                            this.locationMarker3(resp.data[i].x,resp.data[i].y,toTran.x,toTran.y);
-
+                            //this.locationMarker3(resp.data[i].x,resp.data[i].y,toTran.x,toTran.y);
+                            this.locationMarker4(resp.data[i].mac,toTran.x,toTran.y);
                         }
                     } else {
                         this.$message.error(JSON.stringify(resp.data));
@@ -166,6 +175,27 @@
                 //图标标注对象，默认位置为该楼层中心点
                 let tm = new fengmap.FMTextMarker({
                     name: x1+','+y1,
+                    x: x2,
+                    y: y2+1,
+                    height:5,
+                    //文字标注样式设置
+                    fillcolor: "0,0,0", //填充色
+                    fontsize:15, //字体大小
+                    strokecolor: "255,255,0", //边框色
+                    alpha: 0.5   //文本标注透明度,
+                });
+                layer.addMarker(tm);  //文本标注层添加文本Marker
+                tm.alwaysShow();    // 在marker载入完成后，设置 "一直可见"，不被其他层遮挡
+            },
+
+            //文字标注
+            locationMarker4(mac,x2,y2){
+                let groupLayer = this.map.getFMGroup(this.map.focusGroupID);
+                let layer = new fengmap.FMTextMarkerLayer();   //实例化TextMarkerLayer
+                groupLayer.addLayer(layer);    //添加文本标注层到模型层。否则地图上不会显示
+                //图标标注对象，默认位置为该楼层中心点
+                let tm = new fengmap.FMTextMarker({
+                    name: mac,
                     x: x2,
                     y: y2+1,
                     height:5,

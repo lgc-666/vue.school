@@ -37,7 +37,7 @@ Vue.use(BaiduMap, {
 Vue.use(ElementUI);
 Vue.use(VCharts);
 //Vue.use(Antd);
-Vue.prototype.$echarts = echarts;
+Vue.prototype.$echarts = echarts;  //注册组件
 //Vue.prototype.$qs = qs;
 
 axios.defaults.withCredentials = true;// 允许跨域携带cookie
