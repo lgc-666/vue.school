@@ -27,7 +27,7 @@ axios.interceptors.response.use(success=>{
     }
     else if (error.response.status == 401)
     {
-        Message.error({message:'尚未登录，请登录'})
+        Message.error({message:'尚未登录或登录已过期，请重新登录'})
     }
     else {
         if(error.response.data.msg)

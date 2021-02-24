@@ -29,6 +29,11 @@
             <el-table-column label="是否已处理" align="center">
                 <template slot-scope="scope">{{scope.row.handleJudge}}</template>
             </el-table-column>
+            <el-table-column label="管理" align="center">
+                <template slot-scope="scope">
+                    <el-button type="success" icon="el-icon-thumb" plain @click="handleDo(scope.row)">处理</el-button>
+                </template>
+            </el-table-column>
             <el-table-column label="mac" align="center">
                 <template slot-scope="scope">{{scope.row.mac}}</template>
             </el-table-column>
@@ -218,6 +223,17 @@
                     }
                 })
             },
+            handleDo(row){
+                this.deleteRequest('/doStopVisit',{stop_visit_id:row.stop_visit_id,address:row.address}).then(resp => {
+                    if (resp.success) {
+                        this.$message.success(resp.data)
+                        this.btn2()
+                    } else {
+                        this.$message.error(resp.data);
+                    }
+                })
+            },
+
             btn2 () {
                 this.list=[],
                     this.init()
