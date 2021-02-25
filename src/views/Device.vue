@@ -207,6 +207,35 @@
                     }
                 })
             },
+
+            btnquery () {
+                this.list=[],
+                this.getRequest('/listDeviceSearch',{staffdata:this.staffdata,start:this.start,size:this.size}).then(resp => {
+                    if (resp.success) {
+                        console.log('total是:' + resp.data.total)
+                        this.total = resp.data.total;
+                        this.pages = resp.data.pages;
+                        for (let i = 0; i < resp.data.list.length; i++) {
+                            let add = {}
+                            add.devicename = resp.data.list[i].devicename
+                            add.id = resp.data.list[i].id
+                            add.devicetype = resp.data.list[i].devicetype
+                            add.devicevalue = resp.data.list[i].devicevalue
+                            add.location = resp.data.list[i].location
+                            add.lasttime = resp.data.list[i].lasttime
+                            add.gentime = resp.data.list[i].gentime
+                            add.owner = resp.data.list[i].owner
+                            add.ip = resp.data.list[i].ip
+                            add.port = resp.data.list[i].port
+                            add.deviceid = resp.data.list[i].deviceid
+                            this.list.push(add)
+                        }
+                    } else {
+                        this.$message.error(resp.data);
+                    }
+                })
+            },
+
             handlecheck(row){
                 this.dialogFormVisible = true
                 this.deviceid=row.deviceid
@@ -267,9 +296,7 @@
                 })
                 this.dialogFormVisible2 = false
             },
-            btnquery () {
 
-            },
             /**
              * 第n页
              * @param pageNum

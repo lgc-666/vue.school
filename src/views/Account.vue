@@ -149,6 +149,46 @@
                 })
             },
 
+            btnquery () {
+                this.list=[],
+                this.getRequest('/listUserSearch',{staffdata:this.staffdata,start:this.start,size:this.size}).then(resp => {
+                    console.log('值是:' + resp.success)
+                    if (resp.success) {
+                        console.log('值1是:' + JSON.stringify(resp.data))
+                        console.log('total是:' + resp.data.total)
+                        this.total = resp.data.total;
+                        this.pages = resp.data.pages;
+                        for (let i = 0; i < resp.data.list.length; i++) {
+                            let add = {}
+                            add.status1 = '0'
+                            add.status2 = '0'
+                            add.status3 = '0'
+                            add.username = resp.data.list[i].username
+                            add.user=resp.data.list[i]
+                            for (let j = 0; j < resp.data.list[i].role.length; j++){
+                                console.log('值4是:' + resp.data.list[i].role[j].rid)
+                                if (resp.data.list[i].role[j].rid===1) {
+                                    add.status1 = '1'
+                                    console.log('访客默认开启状态：'+add.status1)
+                                }
+                                else if(resp.data.list[i].role[j].rid===2){
+                                    add.status2 = '2'
+                                    console.log('工作人员默认开启状态：'+add.status2)
+                                }
+                                else if(resp.data.list[i].role[j].rid===3){
+                                    add.status3 = '3'
+                                    console.log('管理员默认开启状态：'+add.status3)
+                                }
+                            }
+                            this.list.push(add)
+                        }
+                    } else {
+                        this.$message.error(JSON.stringify(resp.data));
+                    }
+                })
+            },
+
+
             changePassword(row){
                 this.dialogFormVisible = true
                 this.account=row.username
@@ -192,9 +232,7 @@
                 this.list=[],
                 this.init()
             },
-            btnquery () {
 
-            },
             /**
              * 第n页
              * @param pageNum

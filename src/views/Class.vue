@@ -162,6 +162,31 @@
                     }
                 })
             },
+
+            btnquery () {
+                this.list=[],
+                this.getRequest('/listClassSearch',{staffdata:this.staffdata,start:this.start,size:this.size}).then(resp => {
+                    if (resp.success) {
+                        console.log('total是:' + resp.data.total)
+                        this.total = resp.data.total;
+                        this.pages = resp.data.pages;
+                        for (let i = 0; i < resp.data.list.length; i++) {
+                            let add = {}
+                            add.stopjudge = resp.data.list[i].stopjudge
+                            add.adress = resp.data.list[i].adress
+                            add.x1 = resp.data.list[i].x1
+                            add.x2 = resp.data.list[i].x2
+                            add.y1 = resp.data.list[i].y1
+                            add.y2 = resp.data.list[i].y2
+                            add.classid = resp.data.list[i].classid
+                            this.list.push(add)
+                        }
+                    } else {
+                        this.$message.error(resp.data);
+                    }
+                })
+            },
+
             handlecheck(row){
                 this.dialogFormVisible = true
                 this.classid=row.classid
@@ -225,9 +250,7 @@
                 })
                 this.dialogFormVisible2 = false
             },
-            btnquery () {
 
-            },
             /**
              * 第n页
              * @param pageNum

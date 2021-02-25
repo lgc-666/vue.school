@@ -119,7 +119,7 @@
                 list: [],
                 showinput: true,
                 staffdata:'',
-                placeholder: '可以根据姓名,工号,用户名模糊查询',
+                placeholder: '根据设备id查询设备,支持模糊查找',
                 total: 0, //数据总数
                 size: 8, //每页的数据条数
                 start: 0, //默认开始页面
@@ -174,6 +174,32 @@
                     }
                 })
             },
+
+            btnquery () {
+                this.list=[],
+                this.getRequest('/listmachineSearch',{staffdata:this.staffdata,start:this.start,size:this.size}).then(resp => {
+                    if (resp.success) {
+                        console.log('total是:' + resp.data.total)
+                        this.total = resp.data.total;
+                        this.pages = resp.data.pages;
+                        for (let i = 0; i < resp.data.list.length; i++) {
+                            let add = {}
+                            add.machineid = resp.data.list[i].machineid
+                            add.adress = resp.data.list[i].adress
+                            add.status = resp.data.list[i].status
+                            add.leastrssi = resp.data.list[i].leastrssi
+                            add.beat = resp.data.list[i].beat
+                            add.x = resp.data.list[i].x
+                            add.y = resp.data.list[i].y
+                            add.mid = resp.data.list[i].mid
+                            this.list.push(add)
+                        }
+                    } else {
+                        this.$message.error(resp.data);
+                    }
+                })
+            },
+
             handlecheck(row){
                 this.dialogFormVisible = true
                 this.mid=row.mid
@@ -242,9 +268,7 @@
             blurSear () {
                 this.placeholder = '根据设备id查询设备,支持模糊查找'
             },
-            btnquery () {
 
-            },
             /**
              * 第n页
              * @param pageNum

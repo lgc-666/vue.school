@@ -186,6 +186,33 @@
                     }
                 })
             },
+
+            btnquery () {
+                this.list=[],
+                this.getRequest('/listVisitSearch',{staffdata:this.staffdata,start:this.start,size:this.size}).then(resp => {
+                    if (resp.success) {
+                        console.log('total是:' + resp.data.total)
+                        this.total = resp.data.total;
+                        this.pages = resp.data.pages;
+                        for (let i = 0; i < resp.data.list.length; i++) {
+                            let add = {}
+                            add.inJudge = resp.data.list[i].injudge
+                            add.address = resp.data.list[i].address
+                            add.in_time = resp.data.list[i].inTime
+                            add.left_time = resp.data.list[i].leftTime
+                            add.rt = resp.data.list[i].rt
+                            add.visited_times = resp.data.list[i].visitedTimes
+                            add.last_in_time = resp.data.list[i].lastInTime
+                            add.mac = resp.data.list[i].mac
+                            add.visitid = resp.data.list[i].visitid
+                            this.list.push(add)
+                        }
+                    } else {
+                        this.$message.error(resp.data);
+                    }
+                })
+            },
+
             handlecheck(row){
                 this.dialogFormVisible = true
                 this.visitid=row.visitid
@@ -251,9 +278,7 @@
                 })
                 this.dialogFormVisible2 = false
             },
-            btnquery () {
 
-            },
             /**
              * 第n页
              * @param pageNum

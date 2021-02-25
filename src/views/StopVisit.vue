@@ -8,6 +8,9 @@
         </div>
         <el-table :data="list"
                   v-loading="listLoading" border>
+            <el-table-column label="id" align="center">
+                <template slot-scope="scope">{{scope.row.stop_visit_id}}</template>
+            </el-table-column>
             <el-table-column label="区域名" align="center">
                 <template slot-scope="scope">{{scope.row.address}}</template>
             </el-table-column>
@@ -177,7 +180,7 @@
                             add.visited_times = resp.data.list[i].visitedTimes
                             add.handleJudge = resp.data.list[i].handlejudge
                             add.mac = resp.data.list[i].mac
-                            add.stop_visit_id = resp.data.list[i].stop_visit_id
+                            add.stop_visit_id = resp.data.list[i].stopVisitId
                             this.list.push(add)
                         }
                     } else {
@@ -185,6 +188,33 @@
                     }
                 })
             },
+
+            btnquery () {
+                this.list=[],
+                this.getRequest('/listStopVisitSearch',{staffdata:this.staffdata,start:this.start,size:this.size}).then(resp => {
+                    if (resp.success) {
+                        console.log('total是:' + resp.data.total)
+                        this.total = resp.data.total;
+                        this.pages = resp.data.pages;
+                        for (let i = 0; i < resp.data.list.length; i++) {
+                            let add = {}
+                            add.inJudge = resp.data.list[i].injudge
+                            add.address = resp.data.list[i].address
+                            add.in_time = resp.data.list[i].inTime
+                            add.left_time = resp.data.list[i].leftTime
+                            add.rt = resp.data.list[i].rt
+                            add.visited_times = resp.data.list[i].visitedTimes
+                            add.handleJudge = resp.data.list[i].handlejudge
+                            add.mac = resp.data.list[i].mac
+                            add.stop_visit_id = resp.data.list[i].stopVisitId
+                            this.list.push(add)
+                        }
+                    } else {
+                        this.$message.error(resp.data);
+                    }
+                })
+            },
+
             handlecheck(row){
                 this.dialogFormVisible = true
                 this.stop_visit_id=row.stop_visit_id
@@ -224,7 +254,7 @@
                 })
             },
             handleDo(row){
-                this.deleteRequest('/doStopVisit',{stop_visit_id:row.stop_visit_id,address:row.address}).then(resp => {
+                this.putRequest('/doStopVisit',{stop_visit_id:row.stop_visit_id,address:row.address}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()
@@ -261,9 +291,7 @@
                 })
                 this.dialogFormVisible2 = false
             },
-            btnquery () {
 
-            },
             /**
              * 第n页
              * @param pageNum
