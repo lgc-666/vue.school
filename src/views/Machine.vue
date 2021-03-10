@@ -14,6 +14,9 @@
             <el-table-column label="所在区域" align="center">
                 <template slot-scope="scope">{{scope.row.adress}}</template>
             </el-table-column>
+            <el-table-column label="所属室内地图" align="center">
+                <template slot-scope="scope">{{scope.row.indoorname}}</template>
+            </el-table-column>
             <el-table-column label="设备状态" align="center">
                 <template slot-scope="scope">{{scope.row.status}}</template>
             </el-table-column>
@@ -54,7 +57,22 @@
                     <el-input v-model="form3.machineid"></el-input>
                 </el-form-item>
                 <el-form-item label="所在区域">
-                    <el-input v-model="form3.adress"></el-input>
+                    <el-select v-model="form3.adress" placeholder="设备安放的区域">
+                        <el-option v-for="(item, index) in addressdata"
+                                   :key="index"
+                                   :value="item.label"
+                                   :label="item.label">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="所属室内地图">
+                    <el-select v-model="form3.indoorname" placeholder="请选择所属室内地图">
+                        <el-option v-for="(item, index) in indoordata"
+                                   :key="index"
+                                   :value="item.label"
+                                   :label="item.label">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="设备状态">
                     <el-input v-model="form3.status"></el-input>
@@ -84,10 +102,25 @@
                     <el-input v-model="form4.machineid" placeholder="一个设备只有一个设备id"></el-input>
                 </el-form-item>
                 <el-form-item label="所在区域">
-                    <el-input v-model="form4.adress" placeholder="设备安放的区域"></el-input>
+                    <el-select v-model="form4.adress" placeholder="设备安放的区域">
+                        <el-option v-for="(item, index) in addressdata"
+                                   :key="index"
+                                   :value="item.label"
+                                   :label="item.label">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="所属室内地图">
+                    <el-select v-model="form4.indoorname" placeholder="请选择所属室内地图">
+                        <el-option v-for="(item, index) in indoordata"
+                                   :key="index"
+                                   :value="item.label"
+                                   :label="item.label">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="设备状态">
-                    <el-input v-model="form4.status" placeholder="1为运行，0为停止"></el-input>
+                    <el-input v-model="form4.status" placeholder="在线或离线"></el-input>
                 </el-form-item>
                 <el-form-item label="能探测到的最大范围">
                     <el-input v-model="form4.leastrssi" placeholder="取值为负数"></el-input>
@@ -134,7 +167,8 @@
                     leastrssi:'',
                     beat:'',
                     x:'',
-                    y:''
+                    y:'',
+                    indoorname:''
                 },
                 form4: {
                     machineid:'',
@@ -143,14 +177,51 @@
                     leastrssi:'',
                     beat:'',
                     x:'',
-                    y:''
+                    y:'',
+                    indoorname:''
                 },
+                indoordata:[],
+                addressdata:[]
             }
         },
         mounted () {
+            this.checkJurisdiction()
+            this.checkJurisdiction2()
             this.init()
         },
         methods: {
+            checkJurisdiction () {   //返回区域列表
+                this.getRequest('/listClassNoPage',{}).then(resp => {
+                    if (resp.success) {
+                        console.log('data的长度是:' + resp.data.length)
+                        for (let i = 0; i < resp.data.length; i++) {
+                            let add = {}
+                            add.value = i
+                            add.label = resp.data[i].adress
+                            this.addressdata.push(add)
+                        }
+                        this.form4.adress = this.addressdata[0].label
+                    } else {
+                        //this.$message.error(resp.data);
+                    }
+                })
+            },
+            checkJurisdiction2 () {   //返回地图列表
+                this.getRequest('/listMapMamageNoPage',{}).then(resp => {
+                    if (resp.success) {
+                        console.log('data的长度是:' + resp.data.length)
+                        for (let i = 0; i < resp.data.length; i++) {
+                            let add = {}
+                            add.value = i
+                            add.label = resp.data[i].indoorname
+                            this.indoordata.push(add)
+                        }
+                        this.form4.indoorname = this.indoordata[0].label
+                    } else {
+                        //this.$message.error(resp.data);
+                    }
+                })
+            },
             init () {
                 this.getRequest('/listmachine',{start:this.start,size:this.size}).then(resp => {
                     if (resp.success) {
@@ -167,6 +238,7 @@
                             add.x = resp.data.list[i].x
                             add.y = resp.data.list[i].y
                             add.mid = resp.data.list[i].mid
+                            add.indoorname = resp.data.list[i].indoorname
                             this.list.push(add)
                         }
                     } else {
@@ -192,6 +264,7 @@
                             add.x = resp.data.list[i].x
                             add.y = resp.data.list[i].y
                             add.mid = resp.data.list[i].mid
+                            add.indoorname = resp.data.list[i].indoorname
                             this.list.push(add)
                         }
                     } else {
@@ -209,6 +282,7 @@
                 this.form3.status=row.status
                 this.form3.y=row.y
                 this.form3.beat=row.beat
+                this.form3.indoorname=row.indoorname
                 if(row.leastrssi==null){
                     this.form3.leastrssi=''
                 }
@@ -221,7 +295,7 @@
             handleUpdate(row){
                 console.log('leastrssi是:' + this.form3.leastrssi)
                 console.log('adress是:' + this.form3.adress)
-                this.putRequest('/updatemachine',{ mid:this.mid,machineid:this.form3.machineid, adress:this.form3.adress, x:this.form3.x, status:this.form3.status, y:this.form3.y, beat:this.form3.beat, leastRssi:this.form3.leastrssi}).then(resp => {
+                this.putRequest('/updatemachine',{ mid:this.mid,machineid:this.form3.machineid, adress:this.form3.adress, indoorname:this.form3.indoorname,x:this.form3.x, status:this.form3.status, y:this.form3.y, beat:this.form3.beat, leastRssi:this.form3.leastrssi}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()
@@ -249,7 +323,7 @@
                 this.dialogFormVisible2 = true
             },
             add(){
-                this.postKeyValueRequest('/addmachine',{machineid:this.form4.machineid, adress:this.form4.adress, x:this.form4.x, status:this.form4.status, y:this.form4.y, beat:this.form4.beat, leastRssi:this.form4.leastrssi}).then(resp => {
+                this.postKeyValueRequest('/addmachine',{machineid:this.form4.machineid, adress:this.form4.adress, indoorname:this.form4.indoorname, x:this.form4.x, status:this.form4.status, y:this.form4.y, beat:this.form4.beat, leastRssi:this.form4.leastrssi}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()

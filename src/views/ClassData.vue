@@ -1,20 +1,19 @@
 <template>
     <div>
       <div class="layout-head">
-        <div style="float: left;margin-left: 70px;">
-            <div style="float: left;font-size: 20px;margin-top: 10px;margin-right: 15px">日期:</div>
-            <el-date-picker
-                        style="z-index: 1;margin-right: 30px"
-                        @change="changeday3"
-                        v-model="value3"
-                        align="right"
-                        type="date"
-                        placeholder="选择日期"
-                        value-format="yyyy-MM-dd"
-                        :picker-options="pickerOptions2">
-            </el-date-picker>
-        </div>
-        <div style="float: left;margin-left: 480px;">
+          <div style="float: left;font-size: 20px;margin-top: 10px;margin-right: 10px;margin-left: 25px">室内地址:</div>
+          <div class="shopaddress" style="float: left;">
+              <el-select v-model="shopMap" style="width: 100px">
+                  <el-option v-for="(item, index) in indoordata"
+                             :key="index"
+                             :value="item.label"
+                             :label="item.label">
+                  </el-option>
+              </el-select>
+          </div>
+      </div>
+      <div class="layout-head">
+        <div style="float: left;margin-left: 25px;">
               <div style="float: left;font-size: 20px;margin-top: 10px;margin-right: 15px">日期:</div>
               <el-date-picker
                       style="z-index: 1;margin-right: 30px"
@@ -27,10 +26,23 @@
                       :picker-options="pickerOptions2">
               </el-date-picker>
         </div>
+        <div style="float: left;margin-left: 350px;">
+            <div style="float: left;font-size: 20px;margin-top: 10px;margin-right: 15px">日期:</div>
+            <el-date-picker
+                        style="z-index: 1;margin-right: 30px"
+                        @change="changeday3"
+                        v-model="value3"
+                        align="right"
+                        type="date"
+                        placeholder="选择日期"
+                        value-format="yyyy-MM-dd"
+                        :picker-options="pickerOptions2">
+            </el-date-picker>
+        </div>
       </div>
-        <div id="myChart" style="width:500px;height:300px;float:left;margin-top: 10px;margin-left: 20px;"></div>
-        <div id="myChart2" style="width:600px;height:300px;float:left;margin-top: 10px;margin-left: 190px;"></div>
-        <div id="myChart3" style="width:700px;height:350px;float:left;margin-top: 40px;margin-left: 350px;"></div>
+        <div id="myChart2" style="width:500px;height:250px;float:left;margin-top: 10px;margin-left: 20px;"></div>
+        <div id="myChart" style="width:450px;height:250px;float:left;margin-top: 10px;margin-left: 190px;"></div>
+        <div id="myChart3" style="width:700px;height:250px;float:left;margin-top: 50px;margin-left: 300px;"></div>
     </div>
 </template>
 
@@ -39,6 +51,9 @@
         name: "ClassData",
         data () {
             return {
+                indoordata:[],
+                shopMap:'',
+
                 value3: '',
                 value4: '',
                 value5: '',
@@ -92,6 +107,7 @@
             }
         },
         mounted: function () {
+            this.checkJurisdiction2 ()
             this.getdata()  //初始化时间
             console.log('value3值是:' + this.value3)
             console.log('value4值是:' + this.value4)
@@ -100,6 +116,23 @@
             this.drawLine3()
         },
         methods: {
+            checkJurisdiction2 () {   //返回地图列表
+                this.getRequest('/listMapMamageNoPage',{}).then(resp => {
+                    if (resp.success) {
+                        console.log('data的长度是:' + resp.data.length)
+                        for (let i = 0; i < resp.data.length; i++) {
+                            let add = {}
+                            add.value = i
+                            add.label = resp.data[i].indoorname
+                            this.indoordata.push(add)
+                        }
+                        this.shopMap = this.indoordata[0].label
+                    } else {
+                        //this.$message.error(resp.data);
+                    }
+                })
+            },
+
             drawLine () {
                 this.myChart = this.$echarts.init(document.getElementById('myChart'))
 
@@ -319,7 +352,7 @@
 
             sortVisit(){
                 for (let i = 0; i < this.opinion.length; i++) {
-                    this.getRequest('/sortVisit',{address: this.opinion[i],dateTime: this.value4}).then(resp => {
+                    this.getRequest('/sortVisit',{address: this.opinion[i],dateTime: this.value4,indoorname:this.shopMap}).then(resp => {
                         if (resp.success) {
                             this.opinionData.push(resp.data)
                         } else {
@@ -331,7 +364,7 @@
 
             sortStoptime(){
                 for (let i = 0; i < this.opinion2.length; i++) {
-                    this.getRequest('/sortStoptime',{address: this.opinion2[i],dateTime: this.value3}).then(resp => {
+                    this.getRequest('/sortStoptime',{address: this.opinion2[i],dateTime: this.value3,indoorname: this.shopMap}).then(resp => {
                         if (resp.success) {
                             let add = {}
                             add.value=resp.data,
@@ -347,7 +380,7 @@
             sortNow(){
                 this.saveopinion3=[]
                 for (let i = 0; i < this.opinion3.length; i++) {
-                    this.getRequest('/sortNow',{address: this.opinion3[i]}).then(resp => {
+                    this.getRequest('/sortNow',{address: this.opinion3[i],indoorname:this.shopMap}).then(resp => {
                         if (resp.success) {
                                 this.saveopinion3.push(this.opinion3[i])
                                 this.opinionData3.push(resp.data)
@@ -367,5 +400,10 @@
         height: 50px;
         width: 100%;
         border-bottom: 50px;
+    }
+    .shopaddress{
+        float: right;
+        height: 50px;
+        width: 150px;
     }
 </style>

@@ -8,17 +8,20 @@
         </div>
         <el-table :data="list"
                   v-loading="listLoading" border>
-            <el-table-column label="设备id" align="center">
-                <template slot-scope="scope">{{scope.row.id}}</template>
-            </el-table-column>
-            <el-table-column label="设备操作" align="center">
-                <template slot-scope="scope">{{scope.row.changevalue}}</template>
-            </el-table-column>
-            <el-table-column label="创建时间" align="center">
-                <template slot-scope="scope">{{scope.row.gentime}}</template>
-            </el-table-column>
-            <el-table-column label="所属室内地图" align="center">
+            <el-table-column label="室内地图名称" align="center">
                 <template slot-scope="scope">{{scope.row.indoorname}}</template>
+            </el-table-column>
+            <el-table-column label="fmapID" align="center">
+                <template slot-scope="scope">{{scope.row.fmapID}}</template>
+            </el-table-column>
+            <el-table-column label="经度" align="center">
+                <template slot-scope="scope">{{scope.row.longitude}}</template>
+            </el-table-column>
+            <el-table-column label="纬度" align="center">
+                <template slot-scope="scope">{{scope.row.latitude}}</template>
+            </el-table-column>
+            <el-table-column label="负责人" align="center">
+                <template slot-scope="scope">{{scope.row.charge}}</template>
             </el-table-column>
             <el-table-column label="操作" align="center">
                 <template slot-scope="scope">
@@ -40,24 +43,21 @@
         </el-pagination>
 
         <el-dialog  :visible.sync="dialogFormVisible" width="300px">
-            <el-form :model="form" >
-                <el-form-item label="设备id">
-                    <el-input v-model="form.id"></el-input>
+            <el-form :model="form3" >
+                <el-form-item label="室内地图名称">
+                    <el-input v-model="form3.indoorname" placeholder="室内地图名称"></el-input>
                 </el-form-item>
-                <el-form-item label="设备操作">
-                    <el-input v-model="form.changevalue"></el-input>
+                <el-form-item label="fmapID">
+                    <el-input v-model="form3.fmapID" placeholder="室内地图所对应的ID"></el-input>
                 </el-form-item>
-                <el-form-item label="创建时间">
-                    <el-input v-model="form.gentime"></el-input>
+                <el-form-item label="经度">
+                    <el-input v-model="form3.longitude" placeholder="百度地图中的经度"></el-input>
                 </el-form-item>
-                <el-form-item label="所属室内地图">
-                    <el-select v-model="form.indoorname" placeholder="请选择所属室内地图">
-                        <el-option v-for="(item, index) in indoordata"
-                                   :key="index"
-                                   :value="item.label"
-                                   :label="item.label">
-                        </el-option>
-                    </el-select>
+                <el-form-item label="纬度">
+                    <el-input v-model="form3.latitude" placeholder="百度地图中的维度"></el-input>
+                </el-form-item>
+                <el-form-item label="负责人">
+                    <el-input v-model="form3.charge" placeholder="该室内场所的负责人"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -67,24 +67,21 @@
         </el-dialog>
 
         <el-dialog  :visible.sync="dialogFormVisible2" width="300px">
-            <el-form :model="form2" >
-                <el-form-item label="设备id">
-                    <el-input v-model="form2.id"></el-input>
+            <el-form :model="form4" >
+                <el-form-item label="室内地图名称">
+                    <el-input v-model="form4.indoorname" placeholder="室内地图名称"></el-input>
                 </el-form-item>
-                <el-form-item label="设备操作">
-                    <el-input v-model="form2.changevalue"></el-input>
+                <el-form-item label="fmapID">
+                    <el-input v-model="form4.fmapID" placeholder="室内地图所对应的ID"></el-input>
                 </el-form-item>
-                <el-form-item label="创建时间">
-                    <el-input v-model="form2.gentime"></el-input>
+                <el-form-item label="经度">
+                    <el-input v-model="form4.longitude" placeholder="百度地图中的经度"></el-input>
                 </el-form-item>
-                <el-form-item label="所属室内地图">
-                    <el-select v-model="form2.indoorname" placeholder="请选择所属室内地图">
-                        <el-option v-for="(item, index) in indoordata"
-                                   :key="index"
-                                   :value="item.label"
-                                   :label="item.label">
-                        </el-option>
-                    </el-select>
+                <el-form-item label="纬度">
+                    <el-input v-model="form4.latitude" placeholder="百度地图中的维度"></el-input>
+                </el-form-item>
+                <el-form-item label="负责人">
+                    <el-input v-model="form4.charge" placeholder="该室内场所的负责人"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -97,60 +94,43 @@
 
 <script>
     export default {
-        name: "Logrecord",
+        name: "MapMamage",
         data () {
             return {
                 listLoading: false,
                 list: [],
                 showinput: true,
                 staffdata:'',
-                placeholder: '可以根据设备id模糊查询',
+                placeholder: '根据负责人查询室内地图,支持模糊查找',
                 total: 0, //数据总数
                 size: 8, //每页的数据条数
                 start: 0, //默认开始页面
                 pages: 1,
-                logid:'',
                 dialogFormVisible: false,
                 dialogFormVisible2: false,
-                form: {
-                    id:'',
-                    changevalue:'',
-                    gentime:'',
-                    indoorname:''
+                id:'',
+                form3: {
+                    indoorname:'',
+                    fmapID:'',
+                    longitude:'',
+                    latitude:'',
+                    charge:''
                 },
-                form2: {
-                    id:'',
-                    changevalue:'',
-                    gentime:'',
-                    indoorname:''
+                form4: {
+                    indoorname:'',
+                    fmapID:'',
+                    longitude:'',
+                    latitude:'',
+                    charge:''
                 },
-                indoordata:[]
             }
         },
         mounted () {
-            this.checkJurisdiction2 ()
             this.init()
         },
         methods: {
-            checkJurisdiction2 () {   //返回地图列表
-                this.getRequest('/listMapMamageNoPage',{}).then(resp => {
-                    if (resp.success) {
-                        console.log('data的长度是:' + resp.data.length)
-                        for (let i = 0; i < resp.data.length; i++) {
-                            let add = {}
-                            add.value = i
-                            add.label = resp.data[i].indoorname
-                            this.indoordata.push(add)
-                        }
-                        this.form2.indoorname = this.indoordata[0].label
-                    } else {
-                        //this.$message.error(resp.data);
-                    }
-                })
-            },
-
             init () {
-                this.getRequest('/listLogrecord',{start:this.start,size:this.size}).then(resp => {
+                this.getRequest('/listMapMamage',{start:this.start,size:this.size}).then(resp => {
                     if (resp.success) {
                         console.log('total是:' + resp.data.total)
                         this.total = resp.data.total;
@@ -158,10 +138,11 @@
                         for (let i = 0; i < resp.data.list.length; i++) {
                             let add = {}
                             add.id = resp.data.list[i].id
-                            add.changevalue = resp.data.list[i].changevalue
-                            add.gentime = resp.data.list[i].gentime
-                            add.logid = resp.data.list[i].logid
                             add.indoorname = resp.data.list[i].indoorname
+                            add.fmapID = resp.data.list[i].fmapid
+                            add.longitude = resp.data.list[i].longitude
+                            add.latitude = resp.data.list[i].latitude
+                            add.charge = resp.data.list[i].charge
                             this.list.push(add)
                         }
                     } else {
@@ -172,36 +153,38 @@
 
             btnquery () {
                 this.list=[],
-                this.getRequest('/listLogrecordSearch',{staffdata:this.staffdata,start:this.start,size:this.size}).then(resp => {
-                    if (resp.success) {
-                        console.log('total是:' + resp.data.total)
-                        this.total = resp.data.total;
-                        this.pages = resp.data.pages;
-                        for (let i = 0; i < resp.data.list.length; i++) {
-                            let add = {}
-                            add.id = resp.data.list[i].id
-                            add.changevalue = resp.data.list[i].changevalue
-                            add.gentime = resp.data.list[i].gentime
-                            add.logid = resp.data.list[i].logid
-                            add.indoorname = resp.data.list[i].indoorname
-                            this.list.push(add)
+                    this.getRequest('/listMapMamageSearch',{staffdata:this.staffdata,start:this.start,size:this.size}).then(resp => {
+                        if (resp.success) {
+                            console.log('total是:' + resp.data.total)
+                            this.total = resp.data.total;
+                            this.pages = resp.data.pages;
+                            for (let i = 0; i < resp.data.list.length; i++) {
+                                let add = {}
+                                add.id = resp.data.list[i].id
+                                add.indoorname = resp.data.list[i].indoorname
+                                add.fmapID = resp.data.list[i].fmapid
+                                add.longitude = resp.data.list[i].longitude
+                                add.latitude = resp.data.list[i].latitude
+                                add.charge = resp.data.list[i].charge
+                                this.list.push(add)
+                            }
+                        } else {
+                            this.$message.error(resp.data);
                         }
-                    } else {
-                        this.$message.error(resp.data);
-                    }
-                })
+                    })
             },
 
             handlecheck(row){
                 this.dialogFormVisible = true
-                this.logid=row.logid
-                this.form.changevalue=row.changevalue
-                this.form.id=row.id
-                this.form.gentime=row.gentime
-                this.form.indoorname=row.indoorname
+                this.id=row.id
+                this.form3.indoorname=row.indoorname
+                this.form3.fmapID=row.fmapID
+                this.form3.longitude=row.longitude
+                this.form3.latitude=row.latitude
+                this.form3.charge=row.charge
             },
             handleUpdate(row){
-                this.putRequest('/updateLogrecord',{ logid:this.logid, changevalue:this.form.changevalue, id:this.form.id, gentime:this.form.gentime,indoorname:this.form.indoorname}).then(resp => {
+                this.putRequest('/updateMapMamage',{id:this.id,indoorname:this.form3.indoorname,fmapID:this.form3.fmapID, longitude:this.form3.longitude, latitude:this.form3.latitude, charge:this.form3.charge}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()
@@ -212,7 +195,7 @@
                 this.dialogFormVisible = false
             },
             handleDelete(row){
-                this.deleteRequest('/deleteLogrecord',{logid:row.logid}).then(resp => {
+                this.deleteRequest('/deleteMapMamage',{id:row.id}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()
@@ -225,20 +208,11 @@
                 this.list=[],
                     this.init()
             },
-            blurSearchFor () {
-                if (this.placeholder === '根据设备id查询设备,支持模糊查找') {
-                    this.placeholder = ''
-                }
-            },
-            blurSear () {
-                this.placeholder = '根据设备id查询设备,支持模糊查找'
-            },
             btn3(){
                 this.dialogFormVisible2 = true
-
             },
             add(){
-                this.postKeyValueRequest('/addLogrecord',{changevalue:this.form2.changevalue, id:this.form2.id, gentime:this.form2.gentime,indoorname:this.form2.indoorname}).then(resp => {
+                this.postKeyValueRequest('/addMapMamage',{indoorname:this.form3.indoorname,fmapID:this.form3.fmapID, longitude:this.form3.longitude, latitude:this.form3.latitude, charge:this.form3.charge}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()
@@ -247,6 +221,15 @@
                     }
                 })
                 this.dialogFormVisible2 = false
+            },
+
+            blurSearchFor () {
+                if (this.placeholder === '根据设备id查询设备,支持模糊查找') {
+                    this.placeholder = ''
+                }
+            },
+            blurSear () {
+                this.placeholder = '根据设备id查询设备,支持模糊查找'
             },
 
             /**

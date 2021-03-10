@@ -41,6 +41,9 @@
             <el-table-column label="ip" align="center">
                 <template slot-scope="scope">{{scope.row.ip}}</template>
             </el-table-column>
+            <el-table-column label="所属室内地图" align="center">
+                <template slot-scope="scope">{{scope.row.indoorname}}</template>
+            </el-table-column>
             <el-table-column label="操作" align="center">
                 <template slot-scope="scope">
                     <el-button type="primary" icon="el-icon-edit" circle @click="handlecheck(scope.row)"></el-button>
@@ -74,8 +77,23 @@
                 <el-form-item label="设备状态">
                     <el-input v-model="form.devicevalue"></el-input>
                 </el-form-item>
-                <el-form-item label="设备位置">
-                    <el-input v-model="form.location"></el-input>
+                <el-form-item label="所在区域">
+                    <el-select v-model="form.location" placeholder="设备安放的区域">
+                        <el-option v-for="(item, index) in addressdata"
+                                   :key="index"
+                                   :value="item.label"
+                                   :label="item.label">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="所属室内地图">
+                    <el-select v-model="form.indoorname" placeholder="请选择所属室内地图">
+                        <el-option v-for="(item, index) in indoordata"
+                                   :key="index"
+                                   :value="item.label"
+                                   :label="item.label">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="心跳">
                     <el-input v-model="form.lasttime"></el-input>
@@ -107,8 +125,23 @@
                 <el-form-item label="设备状态">
                     <el-input v-model="form2.devicevalue"></el-input>
                 </el-form-item>
-                <el-form-item label="设备位置">
-                    <el-input v-model="form2.location"></el-input>
+                <el-form-item label="所在区域">
+                    <el-select v-model="form2.location" placeholder="设备安放的区域">
+                        <el-option v-for="(item, index) in addressdata"
+                                   :key="index"
+                                   :value="item.label"
+                                   :label="item.label">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="所属室内地图">
+                    <el-select v-model="form2.indoorname" placeholder="请选择所属室内地图">
+                        <el-option v-for="(item, index) in indoordata"
+                                   :key="index"
+                                   :value="item.label"
+                                   :label="item.label">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="心跳">
                     <el-input v-model="form2.lasttime"></el-input>
@@ -161,7 +194,8 @@
                     gentime:'',
                     owner:'',
                     ip:'',
-                    port:''
+                    port:'',
+                    indoorname:''
                 },
                 form2: {
                     devicename:'',
@@ -173,14 +207,52 @@
                     gentime:'',
                     owner:'',
                     ip:'',
-                    port:''
+                    port:'',
+                    indoorname:''
                 },
+                indoordata:[],
+                addressdata:[]
             }
         },
         mounted () {
+            this.checkJurisdiction()
+            this.checkJurisdiction2()
             this.init()
         },
         methods: {
+            checkJurisdiction () {   //返回区域列表
+                this.getRequest('/listClassNoPage',{}).then(resp => {
+                    if (resp.success) {
+                        console.log('data的长度是:' + resp.data.length)
+                        for (let i = 0; i < resp.data.length; i++) {
+                            let add = {}
+                            add.value = i
+                            add.label = resp.data[i].adress
+                            this.addressdata.push(add)
+                        }
+                        this.form2.location = this.addressdata[0].label
+                    } else {
+                        //this.$message.error(resp.data);
+                    }
+                })
+            },
+            checkJurisdiction2 () {   //返回地图列表
+                this.getRequest('/listMapMamageNoPage',{}).then(resp => {
+                    if (resp.success) {
+                        console.log('data的长度是:' + resp.data.length)
+                        for (let i = 0; i < resp.data.length; i++) {
+                            let add = {}
+                            add.value = i
+                            add.label = resp.data[i].indoorname
+                            this.indoordata.push(add)
+                        }
+                        this.form2.indoorname = this.indoordata[0].label
+                    } else {
+                        //this.$message.error(resp.data);
+                    }
+                })
+            },
+
             init () {
                 this.getRequest('/listDevice',{start:this.start,size:this.size}).then(resp => {
                     if (resp.success) {
@@ -200,6 +272,7 @@
                             add.ip = resp.data.list[i].ip
                             add.port = resp.data.list[i].port
                             add.deviceid = resp.data.list[i].deviceid
+                            add.indoorname = resp.data.list[i].indoorname
                             this.list.push(add)
                         }
                     } else {
@@ -228,6 +301,7 @@
                             add.ip = resp.data.list[i].ip
                             add.port = resp.data.list[i].port
                             add.deviceid = resp.data.list[i].deviceid
+                            add.indoorname = resp.data.list[i].indoorname
                             this.list.push(add)
                         }
                     } else {
@@ -247,9 +321,10 @@
                 this.form.lasttime=row.lasttime
                 this.form.ip=row.ip
                 this.form.gentime=row.gentime
+                this.form.indoorname=row.indoorname
             },
             handleUpdate(row){
-                this.putRequest('/updateDevice',{ deviceid:this.deviceid,devicename:this.form.devicename, id:this.form.id, devicetype:this.form.devicetype, devicevalue:this.form.devicevalue, location:this.form.location, lasttime:this.form.lasttime, ip:this.form.ip, gentime:this.form.gentime}).then(resp => {
+                this.putRequest('/updateDevice',{ deviceid:this.deviceid,devicename:this.form.devicename, id:this.form.id, devicetype:this.form.devicetype, devicevalue:this.form.devicevalue, location:this.form.location, lasttime:this.form.lasttime, ip:this.form.ip, gentime:this.form.gentime, indoorname:this.form.indoorname}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()
@@ -286,7 +361,7 @@
 
             },
             add(){
-                this.postKeyValueRequest('/addDevice',{owner:this.form2.owner,port:this.form2.port,devicename:this.form2.devicename, id:this.form2.id, devicetype:this.form2.devicetype, devicevalue:this.form2.devicevalue, location:this.form2.location, lasttime:this.form2.lasttime, ip:this.form2.ip, gentime:this.form2.gentime}).then(resp => {
+                this.postKeyValueRequest('/addDevice',{owner:this.form2.owner,port:this.form2.port,devicename:this.form2.devicename, id:this.form2.id, devicetype:this.form2.devicetype, devicevalue:this.form2.devicevalue, location:this.form2.location, lasttime:this.form2.lasttime, ip:this.form2.ip, gentime:this.form2.gentime, indoorname:this.form2.indoorname}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()
@@ -319,7 +394,7 @@
             //通过切换按钮更改设备状态
             changeSwitch (row) {
                 console.log("按钮值："+row.devicevalue)
-                this.putRequest('/updateStatus',{status:row.devicevalue,id:row.id}).then(resp => {
+                this.putRequest('/updateStatus',{status:row.devicevalue,id:row.id,indoorname:row.indoorname}).then(resp => {
                     //if (resp.success) {
                         //this.$message.success(resp.data)
                     //} else {

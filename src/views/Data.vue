@@ -2,15 +2,27 @@
     <div class="app-container">
         <div class="address-layout">
             <div class="layout-head">
-                <div style="float: left;font-size: 20px;margin-top: 10px;margin-right: 10px;margin-left: 10px">区域地址:</div>
-                <div class="shopaddress" style="float: left;">
-                    <el-select v-model="shopaddress" style="width: 250px" @change="changeaddress">
+                <div style="float: left;font-size: 20px;margin-top: 10px;margin-right: 10px;margin-left: 25px">室内地址:</div>
+                <div class="shopaddress2" style="float: left;">
+                    <el-select v-model="shopMap" style="width: 100px">
+                        <el-option v-for="(item, index) in indoordata"
+                                   :key="index"
+                                   :value="item.label"
+                                   :label="item.label">
+                        </el-option>
+                    </el-select>
+                </div>
+
+                <div style="float: left;font-size: 20px;margin-top: 10px;margin-right: 10px;margin-left: 100px">区域地址:</div>
+                <div class="shopaddress2" style="float: left;">
+                    <el-select v-model="shopaddress2" style="width: 250px" @change="changeaddress">
                         <el-option v-for="(item, index) in addressdata"
                                    :key="index"
                                    :value="item.label"
                                    :label="item.label"></el-option>
                     </el-select>
                 </div>
+
                 <div class="shoptime" style="float: right">
                     <div style="float: left;font-size: 20px;margin-top: 10px;margin-right: 10px">日期:</div>
                     <el-date-picker
@@ -125,7 +137,7 @@
                 title="请选择区域"
                 :visible.sync="dialogVisible"
                 width="30%">
-            <el-select v-model="shopaddress" style="width: 250px;margin-left: 50px" @change="changeaddress">
+            <el-select v-model="shopaddress2" style="width: 250px;margin-left: 50px" @change="changeaddress">
                 <el-option v-for="(item, index) in addressdata"
                            :key="index"
                            :value="item.label"
@@ -136,6 +148,23 @@
                 <el-button type="primary" @click="chooceaddress">确 定</el-button>
             </span>
         </el-dialog>
+
+        <el-dialog
+                title="请选择室内地图"
+                :visible.sync="dialogVisible2"
+                width="30%">
+            <el-select v-model="shopMap" style="width: 250px;margin-left: 50px">
+                <el-option v-for="(item, index) in indoordata"
+                           :key="index"
+                           :value="item.label"
+                           :label="item.label">
+                </el-option>
+            </el-select>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible2 = false">取 消</el-button>
+                <el-button type="primary" @click="chooceaddress2">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -144,12 +173,16 @@
         name: 'Data',
         data () {
             return {
+                indoordata:[],
+                shopMap:'',
+
+                dialogVisible2: true,
                 dialogVisible: false,
                 dialogVisiblebystaff: false,
                 value: '',
                 value2: '',
                 value3: '',
-                shopaddress: '',
+                shopaddress2: '',
                 orderCountDate: '',
                 chartSettings: {
                     xAxisType: 'time',
@@ -265,6 +298,7 @@
             }
         },
         created () {
+            this.checkJurisdiction2 ()
             this.judge()
         },
 
@@ -272,6 +306,24 @@
             this.destroyed()
         },
         methods: {
+            checkJurisdiction2 () {   //返回地图列表
+                this.getRequest('/listMapMamageNoPage',{}).then(resp => {
+                    if (resp.success) {
+                        console.log('data的长度是:' + resp.data.length)
+                        for (let i = 0; i < resp.data.length; i++) {
+                            let add = {}
+                            add.value = i
+                            add.label = resp.data[i].indoorname
+                            this.indoordata.push(add)
+                        }
+                         //初始化值
+                        this.shopMap = this.indoordata[0].label
+                    } else {
+                        //this.$message.error(resp.data);
+                    }
+                })
+            },
+
             judge () {
                     this.getData()
             },
@@ -291,7 +343,7 @@
                             add.label = resp.data[i].adress
                             this.addressdata.push(add)
                         }
-                        this.shopaddress = this.addressdata[0].label
+                        this.shopaddress2 = this.addressdata[0].label
                     } else {
                         //this.$message.error(resp.data);
                     }
@@ -299,27 +351,36 @@
             },
             gettime () {    //设置定时器，每5秒执行一次任务内容
                 this.timer = setInterval( () => {
-                    this.getcustomerdata()
-                    this.getChartdata()
-                    this.getPassengerflow()
-                    this.Refresh()
+                    console.log('shopMap是:' + this.shopMap)
+                    console.log('shopaddress2是:' + this.shopaddress2)
+                    if(this.shopMap===''||this.shopaddress2===''||this.value2===''){
+                         //啥也不干
+                    }
+                    else{
+                        this.getcustomerdata()
+                        this.getChartdata()
+                        this.getPassengerflow()
+                        this.Refresh()
+                    }
                 }, 5000)
             },
             init () {  //初始化
                 if (this.$store.state.shopflag === false) { // 刚从登录页面过来需要弹窗
                     this.dialogVisible = true
-                    this.shopaddress = this.addressdata[0].label
+                    this.dialogVisible2 = true
+                    this.shopaddress2 = this.addressdata[0].label
 
                 } else {
                     this.dialogVisible = false // 表示登录过了无需在弹窗
-                    this.shopaddress = window.sessionStorage.getItem('address')
+                    this.dialogVisible2 = false
+                    this.shopaddress2 = window.sessionStorage.getItem('address')
                     this.gettoday()
                 }
             },
 
             getcustomerdata () {//获取区域数据统计值、小时统计值(传过来的是Map)
-                console.log('所选区域是:' + this.shopaddress)
-                this.getRequest('/getMainData',{address: this.shopaddress,dateTime: this.value2}).then(resp => {
+                console.log('所选区域是:' + this.shopaddress2)
+                this.getRequest('/getMainData',{address: this.shopaddress2,dateTime: this.value2,indoorname:this.shopMap}).then(resp => {
                     if (resp.success) {
                         console.log('data进入值是:' + JSON.stringify(resp.data))
                         console.log('data进入值22是:' + resp.data.in_class_number)
@@ -334,7 +395,7 @@
             },
 
             getChartdata () { //获取区域数据小时进入访问量统计值
-                this.getRequest('/getInCustomerPerHour',{address: this.shopaddress,dateTime: this.value2}).then(resp => {
+                this.getRequest('/getInCustomerPerHour',{address: this.shopaddress2,dateTime: this.value2,indoorname:this.shopMap}).then(resp => {
                     if (resp.success) {
                         console.log('data是:' + resp.data)
                         this.chartData1 = {
@@ -358,7 +419,7 @@
             },
 
             getPassengerflow () {//获取区域数据小时人流量统计值
-                this.getRequest('/getCustomerPerHour',{address: this.shopaddress,dateTime: this.value}).then(resp => {
+                this.getRequest('/getCustomerPerHour',{address: this.shopaddress2,dateTime: this.value,indoorname:this.shopMap}).then(resp => {
                     if (resp.success) {
                         console.log('data是:' + resp.data)
                         this.chartData = {
@@ -400,9 +461,13 @@
 
             chooceaddress () {  //选择区域
                 this.$store.commit('addshopflag', {shopflag: true})
-                window.sessionStorage.setItem('address', this.shopaddress)
+                window.sessionStorage.setItem('address', this.shopaddress2)
                 this.dialogVisible = false
                 this.gettoday()
+            },
+
+            chooceaddress2 () {  //选择室内地图
+                this.dialogVisible2 = false
             },
 
             destroyed () {
@@ -410,7 +475,7 @@
             },
 
             changeaddress () {   //通过选择按钮改变所选区域
-                window.sessionStorage.setItem('address', this.shopaddress)
+                window.sessionStorage.setItem('address', this.shopaddress2)
                 this.gettoday()
             },
             gettoday () {  //获取今天的数据
@@ -473,7 +538,7 @@
         width: 100%;
         border-bottom: 50px;
     }
-    .shopaddress{
+    .shopaddress2{
         float: right;
         height: 50px;
         width: 150px;

@@ -26,6 +26,9 @@
             <el-table-column label="是否为禁区" align="center">
                 <template slot-scope="scope">{{scope.row.stopjudge}}</template>
             </el-table-column>
+            <el-table-column label="所属室内地图" align="center">
+                <template slot-scope="scope">{{scope.row.indoorname}}</template>
+            </el-table-column>
             <el-table-column label="操作" align="center">
                 <template slot-scope="scope">
                     <el-button type="primary" icon="el-icon-edit" circle @click="handlecheck(scope.row)"></el-button>
@@ -65,6 +68,15 @@
                 <el-form-item label="是否为禁区">
                     <el-input v-model="form.stopjudge"></el-input>
                 </el-form-item>
+                <el-form-item label="所属室内地图">
+                    <el-select v-model="form.indoorname" placeholder="请选择所属室内地图">
+                        <el-option v-for="(item, index) in indoordata"
+                                   :key="index"
+                                   :value="item.label"
+                                   :label="item.label">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -91,6 +103,15 @@
                 </el-form-item>
                 <el-form-item label="是否为禁区">
                     <el-input v-model="form2.stopjudge" placeholder="取值为0或1"></el-input>
+                </el-form-item>
+                <el-form-item label="所属室内地图">
+                    <el-select v-model="form2.indoorname" placeholder="请选择所属室内地图">
+                        <el-option v-for="(item, index) in indoordata"
+                                   :key="index"
+                                   :value="item.label"
+                                   :label="item.label">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -125,6 +146,7 @@
                     x2:'',
                     y1:'',
                     y2:'',
+                    indoorname:''
                 },
                 form2: {
                     adress: '',
@@ -133,13 +155,33 @@
                     x2:'',
                     y1:'',
                     y2:'',
+                    indoorname:''
                 },
+                indoordata:[]
             }
         },
         mounted () {
+            this.checkJurisdiction2 ()
             this.init()
         },
         methods: {
+            checkJurisdiction2 () {   //返回地图列表
+                this.getRequest('/listMapMamageNoPage',{}).then(resp => {
+                    if (resp.success) {
+                        console.log('data的长度是:' + resp.data.length)
+                        for (let i = 0; i < resp.data.length; i++) {
+                            let add = {}
+                            add.value = i
+                            add.label = resp.data[i].indoorname
+                            this.indoordata.push(add)
+                        }
+                        this.form2.indoorname = this.indoordata[0].label
+                    } else {
+                        //this.$message.error(resp.data);
+                    }
+                })
+            },
+
             init () {
                 this.getRequest('/listClass',{start:this.start,size:this.size}).then(resp => {
                     if (resp.success) {
@@ -155,6 +197,7 @@
                             add.y1 = resp.data.list[i].y1
                             add.y2 = resp.data.list[i].y2
                             add.classid = resp.data.list[i].classid
+                            add.indoorname = resp.data.list[i].indoorname
                             this.list.push(add)
                         }
                     } else {
@@ -164,7 +207,7 @@
             },
 
             btnquery () {
-                this.list=[],
+                this.list=[],l
                 this.getRequest('/listClassSearch',{staffdata:this.staffdata,start:this.start,size:this.size}).then(resp => {
                     if (resp.success) {
                         console.log('total是:' + resp.data.total)
@@ -179,6 +222,7 @@
                             add.y1 = resp.data.list[i].y1
                             add.y2 = resp.data.list[i].y2
                             add.classid = resp.data.list[i].classid
+                            add.indoorname = resp.data.list[i].indoorname
                             this.list.push(add)
                         }
                     } else {
@@ -201,9 +245,10 @@
                 this.form.x2=row.x2
                 this.form.y1=row.y1
                 this.form.y2=row.y2
+                this.form.indoorname=row.indoorname
             },
             handleUpdate(row){
-                this.putRequest('/updateClass',{ classid:this.classid,stopJudge:this.form.stopjudge, adress:this.form.adress, x1:this.form.x1, x2:this.form.x2, y1:this.form.y1, y2:this.form.y2}).then(resp => {
+                this.putRequest('/updateClass',{ classid:this.classid,stopJudge:this.form.stopjudge, adress:this.form.adress, x1:this.form.x1, x2:this.form.x2, y1:this.form.y1, y2:this.form.y2,indoorname:this.form.indoorname}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()
@@ -240,7 +285,7 @@
 
             },
             add(){
-                this.postKeyValueRequest('/addClass',{stopJudge:this.form2.stopjudge, adress:this.form2.adress, x1:this.form2.x1, x2:this.form2.x2, y1:this.form2.y1, y2:this.form2.y2}).then(resp => {
+                this.postKeyValueRequest('/addClass',{stopJudge:this.form2.stopjudge, adress:this.form2.adress, x1:this.form2.x1, x2:this.form2.x2, y1:this.form2.y1, y2:this.form2.y2,indoorname:this.form2.indoorname}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()

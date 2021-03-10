@@ -32,6 +32,9 @@
             <el-table-column label="mac" align="center">
                 <template slot-scope="scope">{{scope.row.mac}}</template>
             </el-table-column>
+            <el-table-column label="所属室内地图" align="center">
+                <template slot-scope="scope">{{scope.row.indoorname}}</template>
+            </el-table-column>
             <el-table-column label="操作" align="center">
                 <template slot-scope="scope">
                     <el-button type="primary" icon="el-icon-edit" circle @click="handlecheck(scope.row)"></el-button>
@@ -54,7 +57,13 @@
         <el-dialog  :visible.sync="dialogFormVisible" width="300px">
             <el-form :model="form" >
                 <el-form-item label="区域名">
-                    <el-input v-model="form.address"></el-input>
+                    <el-select v-model="form.address" placeholder="设备安放的区域">
+                        <el-option v-for="(item, index) in addressdata"
+                                   :key="index"
+                                   :value="item.label"
+                                   :label="item.label">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="inJudge">
                     <el-input v-model="form.inJudge"></el-input>
@@ -77,6 +86,15 @@
                 <el-form-item label="mac">
                     <el-input v-model="form.mac"></el-input>
                 </el-form-item>
+                <el-form-item label="所属室内地图">
+                    <el-select v-model="form.indoorname" placeholder="请选择所属室内地图">
+                        <el-option v-for="(item, index) in indoordata"
+                                   :key="index"
+                                   :value="item.label"
+                                   :label="item.label">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -87,7 +105,13 @@
         <el-dialog  :visible.sync="dialogFormVisible2" width="300px">
             <el-form :model="form2" >
                 <el-form-item label="区域名">
-                    <el-input v-model="form2.address"></el-input>
+                    <el-select v-model="form2.address" placeholder="设备安放的区域">
+                        <el-option v-for="(item, index) in addressdata"
+                                   :key="index"
+                                   :value="item.label"
+                                   :label="item.label">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="inJudge">
                     <el-input v-model="form2.inJudge"></el-input>
@@ -109,6 +133,15 @@
                 </el-form-item>
                 <el-form-item label="mac">
                     <el-input v-model="form2.mac"></el-input>
+                </el-form-item>
+                <el-form-item label="所属室内地图">
+                    <el-select v-model="form2.indoorname" placeholder="请选择所属室内地图">
+                        <el-option v-for="(item, index) in indoordata"
+                                   :key="index"
+                                   :value="item.label"
+                                   :label="item.label">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -144,7 +177,8 @@
                     rt:'',
                     visited_times:'',
                     last_in_time:'',
-                    mac:''
+                    mac:'',
+                    indoorname:''
                 },
                 form2: {
                     address: '',
@@ -154,14 +188,52 @@
                     rt:'',
                     visited_times:'',
                     last_in_time:'',
-                    mac:''
+                    mac:'',
+                    indoorname:''
                 },
+                indoordata:[],
+                addressdata:[]
             }
         },
         mounted () {
+            this.checkJurisdiction()
+            this.checkJurisdiction2 ()
             this.init()
         },
         methods: {
+            checkJurisdiction () {   //返回普通区域列表
+                this.getRequest('/listClassNoPagePublic',{}).then(resp => {
+                    if (resp.success) {
+                        console.log('data的长度是:' + resp.data.length)
+                        for (let i = 0; i < resp.data.length; i++) {
+                            let add = {}
+                            add.value = i
+                            add.label = resp.data[i].adress
+                            this.addressdata.push(add)
+                        }
+                        this.form2.address = this.addressdata[0].label
+                    } else {
+                        //this.$message.error(resp.data);
+                    }
+                })
+            },
+            checkJurisdiction2 () {   //返回地图列表
+                this.getRequest('/listMapMamageNoPage',{}).then(resp => {
+                    if (resp.success) {
+                        console.log('data的长度是:' + resp.data.length)
+                        for (let i = 0; i < resp.data.length; i++) {
+                            let add = {}
+                            add.value = i
+                            add.label = resp.data[i].indoorname
+                            this.indoordata.push(add)
+                        }
+                        this.form2.indoorname = this.indoordata[0].label
+                    } else {
+                        //this.$message.error(resp.data);
+                    }
+                })
+            },
+
             init () {
                 this.getRequest('/listVisit',{start:this.start,size:this.size}).then(resp => {
                     if (resp.success) {
@@ -179,6 +251,7 @@
                             add.last_in_time = resp.data.list[i].lastInTime
                             add.mac = resp.data.list[i].mac
                             add.visitid = resp.data.list[i].visitid
+                            add.indoorname = resp.data.list[i].indoorname
                             this.list.push(add)
                         }
                     } else {
@@ -205,6 +278,7 @@
                             add.last_in_time = resp.data.list[i].lastInTime
                             add.mac = resp.data.list[i].mac
                             add.visitid = resp.data.list[i].visitid
+                            add.indoorname = resp.data.list[i].indoorname
                             this.list.push(add)
                         }
                     } else {
@@ -229,9 +303,10 @@
                 this.form.visited_times=row.visited_times
                 this.form.last_in_time=row.last_in_time
                 this.form.mac=row.mac
+                this.form.indoorname=row.indoorname
             },
             handleUpdate(row){
-                this.putRequest('/updateVisit',{ visitid:this.visitid,inJudge:this.form.inJudge, address:this.form.address, in_time:this.form.in_time, left_time:this.form.left_time, rt:this.form.rt, visited_times:this.form.visited_times, last_in_time:this.form.last_in_time, mac:this.form.mac}).then(resp => {
+                this.putRequest('/updateVisit',{ visitid:this.visitid,inJudge:this.form.inJudge, address:this.form.address, in_time:this.form.in_time, left_time:this.form.left_time, rt:this.form.rt, visited_times:this.form.visited_times, last_in_time:this.form.last_in_time, mac:this.form.mac,indoorname:this.form.indoorname}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()
@@ -268,7 +343,7 @@
 
             },
             add(){
-                this.postKeyValueRequest('/addVisit',{inJudge:this.form2.inJudge, address:this.form2.address, in_time:this.form2.in_time, left_time:this.form2.left_time, rt:this.form2.rt, visited_times:this.form2.visited_times, last_in_time:this.form2.last_in_time, mac:this.form2.mac}).then(resp => {
+                this.postKeyValueRequest('/addVisit',{inJudge:this.form2.inJudge, address:this.form2.address, in_time:this.form2.in_time, left_time:this.form2.left_time, rt:this.form2.rt, visited_times:this.form2.visited_times, last_in_time:this.form2.last_in_time, mac:this.form2.mac,indoorname:this.form.indoorname}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()
