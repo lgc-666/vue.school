@@ -4,7 +4,7 @@
             <div class="layout-head">
                 <div style="float: left;font-size: 20px;margin-top: 10px;margin-right: 10px;margin-left: 25px">室内地址:</div>
                 <div class="shopaddress2" style="float: left;">
-                    <el-select v-model="shopMap" style="width: 100px">
+                    <el-select v-model="shopMap" style="width: 100px" @change="changeaddress2">
                         <el-option v-for="(item, index) in indoordata"
                                    :key="index"
                                    :value="item.label"
@@ -317,7 +317,13 @@
                             this.indoordata.push(add)
                         }
                          //初始化值
-                        this.shopMap = this.indoordata[0].label
+                        if(window.sessionStorage.getItem("address2")!=null&&window.sessionStorage.getItem("address2")!=''){
+                            this.shopMap = JSON.parse(window.sessionStorage.getItem('address2'))
+                        }
+                        else{
+                            this.shopMap = this.indoordata[0].label
+                            window.sessionStorage.setItem("address2", JSON.stringify(this.indoordata[0].label));
+                        }
                     } else {
                         //this.$message.error(resp.data);
                     }
@@ -374,12 +380,13 @@
                     this.dialogVisible = false // 表示登录过了无需在弹窗
                     this.dialogVisible2 = false
                     this.shopaddress2 = window.sessionStorage.getItem('address')
+                    this.shopMap = JSON.parse(window.sessionStorage.getItem('address2'))
                     this.gettoday()
                 }
             },
 
             getcustomerdata () {//获取区域数据统计值、小时统计值(传过来的是Map)
-                console.log('所选区域是:' + this.shopaddress2)
+                console.log('所选室内场所是:' + this.shopMap)
                 this.getRequest('/getMainData',{address: this.shopaddress2,dateTime: this.value2,indoorname:this.shopMap}).then(resp => {
                     if (resp.success) {
                         console.log('data进入值是:' + JSON.stringify(resp.data))
@@ -467,6 +474,7 @@
             },
 
             chooceaddress2 () {  //选择室内地图
+                window.sessionStorage.setItem('address2', JSON.stringify(this.shopMap))
                 this.dialogVisible2 = false
             },
 
@@ -478,6 +486,12 @@
                 window.sessionStorage.setItem('address', this.shopaddress2)
                 this.gettoday()
             },
+
+            changeaddress2 () {   //通过选择按钮改变所选地图
+                window.sessionStorage.setItem('address2', JSON.stringify(this.shopMap))
+                this.gettoday()
+            },
+
             gettoday () {  //获取今天的数据
                 this.getdata()
                 this.getcustomerdata()

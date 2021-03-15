@@ -212,7 +212,7 @@
                 this.dialogFormVisible2 = true
             },
             add(){
-                this.postKeyValueRequest('/addMapMamage',{indoorname:this.form3.indoorname,fmapID:this.form3.fmapID, longitude:this.form3.longitude, latitude:this.form3.latitude, charge:this.form3.charge}).then(resp => {
+                this.postKeyValueRequest('/addMapMamage',{indoorname:this.form4.indoorname,fmapID:this.form4.fmapID, longitude:this.form4.longitude, latitude:this.form4.latitude, charge:this.form4.charge}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()

@@ -1,13 +1,23 @@
 <template>
     <div>
         <div style="width: 100%;height: 50px">
-            <el-button-group style="margin-top: 5px;margin-left: 520px">
+            <div style="float: left;font-size: 20px;margin-top: 15px;margin-right: 10px;margin-left: 25px">室内地址:</div>
+            <div style="margin-top: 5px;float: left;">
+                <el-select v-model="shopMap" style="width: 100px" @change="changeaddress">
+                    <el-option v-for="(item, index) in indoordata"
+                               :key="index"
+                               :value="item.label"
+                               :label="item.label">
+                    </el-option>
+                </el-select>
+            </div>
+            <el-button-group style="margin-top: 5px;margin-left: 315px">
                 <el-button icon="el-icon-search" @click="goto1">坐标图</el-button>
                 <el-button icon="el-icon-search" @click="goto2">热力图</el-button>
                 <el-button type="info" icon="el-icon-search" @click="goto3">轨迹图</el-button>
             </el-button-group>
-            <el-button type="primary" round @click="btnquery" style="margin-top: 5px;float: right;margin-left: 10px;margin-right: 90px">查询信息</el-button>
-            <el-input v-model="staffdata" style="width: 250px;float: right;margin-top: 5px;" :placeholder=placeholder @focus="blurSearchFor()" @blur="blurSear" v-if="showinput"></el-input>
+            <el-button type="primary" round @click="btnquery" style="margin-top: 5px;float: right;margin-left: 10px;margin-right: 80px">查询信息</el-button>
+            <el-input v-model="staffdata" style="width: 220px;float: right;margin-right:10px;margin-top: 5px;" :placeholder=placeholder @focus="blurSearchFor()" @blur="blurSear" v-if="showinput"></el-input>
         </div>
         <div id="fmap"></div>
     </div>
@@ -23,21 +33,53 @@
     import img2 from "../assets/end.png";
     import {transform} from "../utils/transform";
     import {Message} from "element-ui";
-    let map =null
+
     export default {
         name: "Trave",
         data () {
+            this.map = null
             return {
                 placeholder: '请输入即将要查询的mac地址',
                 showinput: true,
                 staffdata:'',
-                flag:''
+                flag:'',
+                indoordata:[],
+                shopMap:'',
             }
         },
         mounted () {
+            this.checkJurisdiction2()
             this.openMap()
         },
         methods: {
+            changeaddress () {   //通过选择按钮改变所选区域
+                window.sessionStorage.setItem("indoor", JSON.stringify(this.shopMap))
+                this.btn1()
+            },
+            checkJurisdiction2 () {   //返回地图列表
+                this.getRequest('/listMapMamageNoPage',{}).then(resp => {
+                    if (resp.success) {
+                        console.log('data的长度是:' + resp.data.length)
+                        for (let i = 0; i < resp.data.length; i++) {
+                            let add = {}
+                            add.value = i
+                            add.label = resp.data[i].indoorname
+                            this.indoordata.push(add)
+                        }
+                        //初始化值
+                        if(window.sessionStorage.getItem("indoor")!=null&&window.sessionStorage.getItem("indoor")!=''){
+                            this.shopMap=JSON.parse(window.sessionStorage.getItem("indoor"))
+                        }
+                        else {
+                            this.shopMap = this.indoordata[0].label
+                            window.sessionStorage.setItem("indoor", JSON.stringify(this.indoordata[0].label));
+                        }
+                    } else {
+                        //this.$message.error(resp.data);
+                    }
+                })
+            },
+
             goto1(){
                 this.$router.replace("/map");  //页面跳转
             },
@@ -51,27 +93,41 @@
 
             openMap () {
                 this.flag=0
-                let fmapID = '1315702510946439169'
-                let mapOptions = {
-                    container: document.getElementById('fmap'),
-                    // 必要，地图应用名称，通过蜂鸟云后台创建
-                    appName: 'za102',
-                    // 必要，地图应用密钥，通过蜂鸟云后台获取
-                    key: 'cc13bc8c80c3cbdc44813dfc015321af',
-                    //defaultViewMode:fengmap.FMViewMode.MODE_2D,
-                    defaultMapScale: 250,
-                }
-                map = new fengmap.FMMap(mapOptions)
-                map.openMapById(fmapID, (error) => {
-                    console.log(error)
-                })
+                this.getRequest('/listMapMamageSearchByIndoorname',{staffdata:JSON.parse(window.sessionStorage.getItem("indoor"))}).then(resp => {
+                    if (resp.success) {
+                        console.log('data进入值是:' + JSON.stringify(resp.data))
+                        // '1315702510946439169'
+                        let fmapID = resp.data.fmapid
+                        let mapOptions = {
+                            container: document.getElementById('fmap'),
+                            // 必要，地图应用名称，通过蜂鸟云后台创建
+                            appName: 'za102',
+                            // 必要，地图应用密钥，通过蜂鸟云后台获取
+                            key: 'cc13bc8c80c3cbdc44813dfc015321af',
+                            //defaultViewMode: fengmap.FMViewMode.MODE_2D,
+                            defaultMapScale: 250
+                        }
+                        this.map = new fengmap.FMMap(mapOptions)
+                        this.map.openMapById(fmapID, (error) => {
+                            console.log(error)
+                        })
 
+                        this.map.on('loadComplete', () => {
+                            console.log('地图加载完成！')
+                            this.loadScrollFloorCtrl()
+                            //设置地图的旋转角为10度,摆正地图
+                            this.map.rotateAngle=10
+                        })
+                        clearTimeout(this.timer);  //清除延迟执行
 
-                map.on('loadComplete', () => {
-                    console.log('地图加载完成！')
-                    this.loadScrollFloorCtrl()
-                    //设置地图的旋转角为0度,摆正地图
-                    map.rotateAngle=10
+                        this.timer = setTimeout(()=>{   //设置延迟1s执行给地图加载的时间
+                            this.btn2()
+                            console.log('ok');
+                        },800);
+
+                    } else {
+                        this.$message.error(resp.data);
+                    }
                 })
             },
 
@@ -92,14 +148,14 @@
                 }
 
                 let scrollFloorControl = new fengmap.FMScrollGroupsControl(
-                    map,
+                    this.map,
                     scrollFloorCtlOpt
                 )
                 // 楼层切换
                 scrollFloorControl.onChange((groups, allLayer) => {
                     console.log(groups)
                 })
-                map.on('mapClickNode', function(event) {
+                this.map.on('mapClickNode', function(event) {
                     // 打印出点击处的地图坐标
                     console.log(event.eventInfo.coord);
                     //  Message.info('x：'+event.eventInfo.coord.x+'，y：'+event.eventInfo.coord.y);
@@ -108,6 +164,15 @@
 
             btn2 () {
                 console.log('地图已切换');
+            },
+
+            btn1 () {
+                this.$router.replace("/administrators");
+                setTimeout(() => {
+                    this.$router.replace("/trave");
+                },100)
+
+                console.log('坐标已显示');
             },
 
             blurSearchFor () {
@@ -120,7 +185,7 @@
             },
             //文字标注
             locationMarkerstartend(str,x2,y2){
-                let groupLayer = map.getFMGroup(map.focusGroupID);
+                let groupLayer = this.map.getFMGroup(this.map.focusGroupID);
                 let layer = new fengmap.FMTextMarkerLayer();   //实例化TextMarkerLayer
                 groupLayer.addLayer(layer);    //添加文本标注层到模型层。否则地图上不会显示
                 //图标标注对象，默认位置为该楼层中心点
@@ -141,13 +206,9 @@
             btnquery () {
                 if (this.staffdata === '') {
                 } else {
-                    window.sessionStorage.setItem('staffdata', this.staffdata)
-                    this.$router.replace("/administrators");
-                    setTimeout(() => {
-                        this.$router.replace("/trave")
-                    },100)
-                    setTimeout(() => {
-                        this.getRequest('/listByMac', {mac: window.sessionStorage.getItem("staffdata")}).then(resp => {
+                        window.sessionStorage.setItem('staffdata', this.staffdata)
+                   // setTimeout(() => {
+                        this.getRequest('/listByMac', {mac: window.sessionStorage.getItem("staffdata"),indoorname:JSON.parse(window.sessionStorage.getItem("indoor"))}).then(resp => {
                             console.log('值2是:' + resp.data[0].x)
                             let data = []
                             //原始坐标
@@ -181,15 +242,18 @@
                                     size: 30,  //设置图片显示尺寸
                                     height: 1,  //marker标注高度
                                 });
-                                map.addLocationMarker(locationMarker);
+                                this.map.addLocationMarker(locationMarker);
                                 //实际图上的x、y需要经过坐标转换才能变成屏幕上的大坐标（转换方法看桌面的图）
                                 locationMarker.setPosition({
                                     x: data[0].x,
                                     y: data[0].y,
-                                    groupID: map.focusGroupID  //设置定位点所在楼层
+                                    groupID: this.map.focusGroupID  //设置定位点所在楼层
                                 });
+
                                 locationMarker.alwaysShow();
-                                this.locationMarkerstartend('起点', data[0].x, data[0].y)
+
+
+                                this.locationMarkerstartend(''+resp.data[0].mac+'的起点', data[0].x, data[0].y)
 
                                 // 实例化定位标注对象(终点)
                                 let locationMarker2 = new fengmap.FMLocationMarker({
@@ -197,12 +261,12 @@
                                     size: 30,  //设置图片显示尺寸
                                     height: 1,  //marker标注高度
                                 });
-                                map.addLocationMarker(locationMarker2);
+                                this.map.addLocationMarker(locationMarker2);
                                 //实际图上的x、y需要经过坐标转换才能变成屏幕上的大坐标（转换方法看桌面的图）
                                 locationMarker2.setPosition({
                                     x: data[data.length - 1].x,
                                     y: data[data.length - 1].y,
-                                    groupID: map.focusGroupID  //设置定位点所在楼层
+                                    groupID: this.map.focusGroupID  //设置定位点所在楼层
                                 });
                                 //locationMarker2.alwaysShow();
                                 this.locationMarkerstartend('终点', data[data.length - 1].x, data[data.length - 1].y)
@@ -211,7 +275,7 @@
                                 //初始化线图层
                                 let line = new fengmap.FMLineMarker();
                                 //楼层id
-                                let gid = map.focusGroupID;
+                                let gid = this.map.focusGroupID;
                                 //路径线点集合
                                 let points = data;
 
@@ -243,12 +307,12 @@
                                     //设置线动画,false为动画
                                     noAnimate: false
                                 };
-                                map.drawLineMark(line, lineStyle);
+                                this.map.drawLineMark(line, lineStyle);
                             } else {
                                 this.$message.error(JSON.stringify(resp.data));
                             }
                         })
-                    },2000)
+                   // },1000)
               }
             },
         }

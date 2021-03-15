@@ -1,8 +1,18 @@
 <template>
     <div>
         <div style="width: 100%;height: 50px">
-            <el-button type="primary" round @click="btn2" icon="el-icon-refresh-right" style="float: left;margin-top: 5px;margin-left: 30px">坐标刷新</el-button>
-            <el-button-group style="margin-top: 5px;margin-left: 370px">
+            <div style="float: left;font-size: 20px;margin-top: 15px;margin-right: 10px;margin-left: 25px">室内地址:</div>
+            <div style="margin-top: 5px;float: left;">
+                <el-select v-model="shopMap" style="width: 100px" @change="changeaddress">
+                    <el-option v-for="(item, index) in indoordata"
+                               :key="index"
+                               :value="item.label"
+                               :label="item.label">
+                    </el-option>
+                </el-select>
+            </div>
+            <el-button type="primary" round @click="btn1" icon="el-icon-refresh-right" style="float: left;margin-top: 5px;margin-left: 30px">坐标刷新</el-button>
+            <el-button-group style="margin-top: 5px;margin-left: 160px">
                 <el-button icon="el-icon-search" @click="goto1">坐标图</el-button>
                 <el-button type="info" icon="el-icon-search" @click="goto2">热力图</el-button>
                 <el-button icon="el-icon-search" @click="goto3">轨迹图</el-button>
@@ -28,12 +38,44 @@
         name: "Hot",
         data () {
             this.map = null
-            return {}
+            return {
+                indoordata:[],
+                shopMap:'',
+            }
         },
         mounted () {
+            this.checkJurisdiction2()
             this.openMap()
         },
         methods: {
+            changeaddress () {   //通过选择按钮改变所选区域
+                window.sessionStorage.setItem("indoor", JSON.stringify(this.shopMap))
+                this.btn1()
+            },
+            checkJurisdiction2 () {   //返回地图列表
+                this.getRequest('/listMapMamageNoPage',{}).then(resp => {
+                    if (resp.success) {
+                        console.log('data的长度是:' + resp.data.length)
+                        for (let i = 0; i < resp.data.length; i++) {
+                            let add = {}
+                            add.value = i
+                            add.label = resp.data[i].indoorname
+                            this.indoordata.push(add)
+                        }
+                        //初始化值
+                        if(window.sessionStorage.getItem("indoor")!=null&&window.sessionStorage.getItem("indoor")!=''){
+                            this.shopMap=JSON.parse(window.sessionStorage.getItem("indoor"))
+                        }
+                        else {
+                            this.shopMap = this.indoordata[0].label
+                            window.sessionStorage.setItem("indoor", JSON.stringify(this.indoordata[0].label));
+                        }
+                    } else {
+                        //this.$message.error(resp.data);
+                    }
+                })
+            },
+
             goto1(){
                 this.$router.replace("/map");  //页面跳转
             },
@@ -46,33 +88,42 @@
 
 
             openMap () {
-                let fmapID = '1315702510946439169'
-                let mapOptions = {
-                    container: document.getElementById('fmap'),
-                    // 必要，地图应用名称，通过蜂鸟云后台创建
-                    appName: 'za102',
-                    // 必要，地图应用密钥，通过蜂鸟云后台获取
-                    key: 'cc13bc8c80c3cbdc44813dfc015321af',
-                    defaultViewMode: fengmap.FMViewMode.MODE_2D,
-                    defaultMapScale: 250
-                }
-                this.map = new fengmap.FMMap(mapOptions)
-                this.map.openMapById(fmapID, (error) => {
-                    console.log(error)
+                this.getRequest('/listMapMamageSearchByIndoorname',{staffdata:JSON.parse(window.sessionStorage.getItem("indoor"))}).then(resp => {
+                    if (resp.success) {
+                        console.log('data进入值是:' + JSON.stringify(resp.data))
+                        // '1315702510946439169'
+                        let fmapID = resp.data.fmapid
+                        let mapOptions = {
+                            container: document.getElementById('fmap'),
+                            // 必要，地图应用名称，通过蜂鸟云后台创建
+                            appName: 'za102',
+                            // 必要，地图应用密钥，通过蜂鸟云后台获取
+                            key: 'cc13bc8c80c3cbdc44813dfc015321af',
+                            defaultViewMode: fengmap.FMViewMode.MODE_2D,
+                            defaultMapScale: 250
+                        }
+                        this.map = new fengmap.FMMap(mapOptions)
+                        this.map.openMapById(fmapID, (error) => {
+                            console.log(error)
+                        })
+
+                        this.map.on('loadComplete', () => {
+                            console.log('地图加载完成！')
+                            this.loadScrollFloorCtrl()
+                            //设置地图的旋转角为0度,摆正地图
+                            this.map.rotateAngle=0
+                        })
+                        clearTimeout(this.timer);  //清除延迟执行
+
+                        this.timer = setTimeout(()=>{   //设置延迟1s执行给地图加载的时间
+                            this.btn2()
+                            console.log('ok');
+                        },800);
+
+                    } else {
+                        this.$message.error(resp.data);
+                    }
                 })
-
-
-                this.map.on('loadComplete', () => {
-                    console.log('地图加载完成！')
-                    this.loadScrollFloorCtrl()
-                    //设置地图的旋转角为0度,摆正地图
-                    this.map.rotateAngle=0
-                })
-
-                this.timer = setTimeout(()=>{   //设置延迟1s执行给地图加载的时间
-                    this.btn2()
-                    console.log('ok');
-                },1000);
             },
 
             // 加载滚动型楼层切换控件
@@ -106,14 +157,21 @@
             },
 
             btn2 () {
+                this.locationMarker2()
+                console.log('坐标已显示');
+            },
+
+            btn1 () {
                 this.$router.replace("/administrators");
-                this.$router.replace("/hot");
+                setTimeout(() => {
+                    this.$router.replace("/hot");
+                },100)
                 this.locationMarker2()
                 console.log('坐标已显示');
             },
 
             locationMarker2(){
-                this.getRequest('/getDBlocationNotRepeat').then(resp => {
+                this.getRequest('/getDBlocationNotRepeat',{indoorname:JSON.parse(window.sessionStorage.getItem("indoor"))}).then(resp => {
                     console.log('值2是:' + resp.data[0].x)
                     let data=[]
                     //原始坐标
