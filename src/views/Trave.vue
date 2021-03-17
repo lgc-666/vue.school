@@ -18,6 +18,14 @@
             </el-button-group>
             <el-button type="primary" round @click="btnquery" style="margin-top: 5px;float: right;margin-left: 10px;margin-right: 80px">查询信息</el-button>
             <el-input v-model="staffdata" style="width: 220px;float: right;margin-right:10px;margin-top: 5px;" :placeholder=placeholder @focus="blurSearchFor()" @blur="blurSear" v-if="showinput"></el-input>
+            <el-time-picker style="margin-left: 20px;margin-top: 10px;" @change="changeaddress"
+                    is-range
+                    v-model="value3"
+                    range-separator="至"
+                    start-placeholder="当天开始时间"
+                    end-placeholder="当天结束时间"
+                    placeholder="选择时间范围">
+            </el-time-picker>
         </div>
         <div id="fmap"></div>
     </div>
@@ -39,6 +47,7 @@
         data () {
             this.map = null
             return {
+                value3: [new Date(),new Date()],
                 placeholder: '请输入即将要查询的mac地址',
                 showinput: true,
                 staffdata:'',
@@ -54,6 +63,8 @@
         methods: {
             changeaddress () {   //通过选择按钮改变所选区域
                 window.sessionStorage.setItem("indoor", JSON.stringify(this.shopMap))
+                window.sessionStorage.setItem("start3", this.value3[0])
+                window.sessionStorage.setItem("end3", this.value3[1])
                 this.btn1()
             },
             checkJurisdiction2 () {   //返回地图列表
@@ -73,6 +84,18 @@
                         else {
                             this.shopMap = this.indoordata[0].label
                             window.sessionStorage.setItem("indoor", JSON.stringify(this.indoordata[0].label));
+                        }
+
+                        if(window.sessionStorage.getItem("start3")===null||window.sessionStorage.getItem("end3")===null||window.sessionStorage.getItem("start3")===''||window.sessionStorage.getItem("end3")===''){
+                            console.log('value3值是:' + this.value3[0])
+                            window.sessionStorage.setItem("start3", this.value3[0]);
+                            window.sessionStorage.setItem("end3", this.value3[1]);
+
+                        }
+                        else {
+                            console.log('value3值是:' + this.value3[0])
+                            this.value3=[window.sessionStorage.getItem("start3"),window.sessionStorage.getItem("end3")]
+                            console.log('value3赋值后是:' + this.value3[0])
                         }
                     } else {
                         //this.$message.error(resp.data);
@@ -208,7 +231,7 @@
                 } else {
                         window.sessionStorage.setItem('staffdata', this.staffdata)
                    // setTimeout(() => {
-                        this.getRequest('/listByMac', {mac: window.sessionStorage.getItem("staffdata"),indoorname:JSON.parse(window.sessionStorage.getItem("indoor"))}).then(resp => {
+                        this.getRequest('/listByMac', {mac: window.sessionStorage.getItem("staffdata"),indoorname:JSON.parse(window.sessionStorage.getItem("indoor")),start:this.formateDate(window.sessionStorage.getItem("start3")),end:this.formateDate(window.sessionStorage.getItem("end3"))}).then(resp => {
                             console.log('值2是:' + resp.data[0].x)
                             let data = []
                             //原始坐标
@@ -315,6 +338,16 @@
                    // },1000)
               }
             },
+            //时间转化：“2020-10-09 14:50:01”格式
+            formateDate(datetime) {
+                function addDateZero(num) {
+                    return (num < 10 ? "0" + num : num);
+                }
+                let c = new Date()
+                let d = new Date(datetime);
+                let formatdatetime = c.getFullYear() + '-' + addDateZero(c.getMonth() + 1) + '-' + addDateZero(c.getDate()) + ' ' + addDateZero(d.getHours()) + ':' + addDateZero(d.getMinutes()) + ':' + addDateZero(d.getSeconds());
+                return formatdatetime;
+            }
         }
     }
 </script>

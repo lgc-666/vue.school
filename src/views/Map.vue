@@ -17,6 +17,14 @@
                 <el-button icon="el-icon-search" @click="goto2">热力图</el-button>
                 <el-button icon="el-icon-search" @click="goto3">轨迹图</el-button>
             </el-button-group>
+            <el-time-picker style="float: right;margin-top: 5px;margin-right: 100px" @change="changeaddress"
+                            is-range
+                            v-model="value1"
+                            range-separator="至"
+                            start-placeholder="当天开始时间"
+                            end-placeholder="当天结束时间"
+                            placeholder="选择时间范围">
+            </el-time-picker>
         </div>
         <div id="fmap"></div>
     </div>
@@ -38,6 +46,7 @@
         data () {
             this.map = null
             return {
+                value1: [new Date(),new Date()],
                 indoordata:[],
                 shopMap:'',
                 fmapid:''
@@ -52,6 +61,8 @@
         methods: {
             changeaddress () {   //通过选择按钮改变所选区域
                 window.sessionStorage.setItem("indoor", JSON.stringify(this.shopMap))
+                window.sessionStorage.setItem("start1", this.value1[0])
+                window.sessionStorage.setItem("end1", this.value1[1])
                 this.btn1()
             },
 
@@ -73,6 +84,17 @@
                         else {
                             this.shopMap = this.indoordata[0].label
                             window.sessionStorage.setItem("indoor", JSON.stringify(this.indoordata[0].label));
+                        }
+                        if(window.sessionStorage.getItem("start1")===null||window.sessionStorage.getItem("end1")===null||window.sessionStorage.getItem("start1")===''||window.sessionStorage.getItem("end1")===''){
+                            console.log('value1值是:' + this.value1[0])
+                            window.sessionStorage.setItem("start1", this.value1[0]);
+                            window.sessionStorage.setItem("end1", this.value1[1]);
+
+                        }
+                        else {
+                            console.log('value1值是:' + this.value1[0])
+                            this.value1=[window.sessionStorage.getItem("start1"),window.sessionStorage.getItem("end1")]
+                            console.log('value1赋值后是:' + this.value1[0])
                         }
 
                     } else {
@@ -180,7 +202,7 @@
 
             //设坐标
             locationMarker2(){
-                this.getRequest('/getDBlocationNotRepeat',{indoorname:JSON.parse(window.sessionStorage.getItem("indoor"))}).then(resp => {
+                this.getRequest('/getDBlocationNotRepeat',{indoorname:JSON.parse(window.sessionStorage.getItem("indoor")),start:this.formateDate(window.sessionStorage.getItem("start1")),end:this.formateDate(window.sessionStorage.getItem("end1"))}).then(resp => {
                     console.log('值2是:' + resp.data[0].x)
                     //坐标转换
                     //原始坐标
@@ -266,6 +288,17 @@
                 layer.addMarker(tm);  //文本标注层添加文本Marker
                 tm.alwaysShow();    // 在marker载入完成后，设置 "一直可见"，不被其他层遮挡
             },
+
+            //时间转化：“2020-10-09 14:50:01”格式
+            formateDate(datetime) {
+                function addDateZero(num) {
+                    return (num < 10 ? "0" + num : num);
+                }
+                let c = new Date()
+                let d = new Date(datetime);
+                let formatdatetime = c.getFullYear() + '-' + addDateZero(c.getMonth() + 1) + '-' + addDateZero(c.getDate()) + ' ' + addDateZero(d.getHours()) + ':' + addDateZero(d.getMinutes()) + ':' + addDateZero(d.getSeconds());
+                return formatdatetime;
+            }
         }
     }
 </script>
