@@ -139,6 +139,7 @@
                 this.getRequest('/listClassNoPage',{}).then(resp => {
                     if (resp.success) {
                         this.addressdata=[]
+                        this.opinion2=[]
                         console.log('data是:' + resp.data)
                         for (let i = 0; i < resp.data.length; i++) {
                             //若是普通区域
@@ -206,6 +207,7 @@
                 this.getRequest('/listClassNoPage',{}).then(resp => {
                     if (resp.success) {
                         this.addressdata=[]
+                        this.opinion=[]
                         console.log('data是:' + resp.data)
                         for (let i = 0; i < resp.data.length; i++) {
                             //若是普通区域
