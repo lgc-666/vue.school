@@ -11,6 +11,7 @@
                   </el-option>
               </el-select>
           </div>
+          <el-button type="primary" round @click="btn2" icon="el-icon-refresh-right" style="float: left;margin-top: 0px;margin-left: 2px">刷新</el-button>
       </div>
       <div class="layout-head">
         <div style="float: left;margin-left: 25px;">
@@ -68,6 +69,7 @@
                 myChart2:'',
                 opinion: [],
                 opinionData: [],
+                opinionother:[],
                 //opinion: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"],
                 //opinionData: [5, 20, 36, 10, 10, 20],
 
@@ -116,7 +118,14 @@
             this.drawLine3()
         },
         methods: {
+            btn2(){
+                this.checkJurisdiction2 ()
+                this.getdata()  //初始化时间
+                this.drawLine()
+                this.drawLine2()
+            },
             checkJurisdiction2 () {   //返回地图列表
+                this.indoordata=[]
                 this.getRequest('/listMapMamageNoPage',{}).then(resp => {
                     if (resp.success) {
                         console.log('data的长度是:' + resp.data.length)
@@ -140,6 +149,7 @@
                     if (resp.success) {
                         this.addressdata=[]
                         this.opinion2=[]
+                        this.opinionData2=[]
                         console.log('data是:' + resp.data)
                         for (let i = 0; i < resp.data.length; i++) {
                             //若是普通区域
@@ -191,7 +201,7 @@
                             // 3、展示数据
                             // 使用刚指定的配置项和数据显示图表。
                             this.myChart.setOption(option);
-                        }, 1000);
+                        }, 2000);
 
                     } else {
                         this.$message.error(resp.data);
@@ -208,6 +218,8 @@
                     if (resp.success) {
                         this.addressdata=[]
                         this.opinion=[]
+                        this.opinionData=[]
+                        this.opinionother=[]
                         console.log('data是:' + resp.data)
                         for (let i = 0; i < resp.data.length; i++) {
                             //若是普通区域
@@ -235,7 +247,7 @@
                                 },
                                 xAxis: {
                                     //data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-                                    data:this.opinion
+                                    data:this.opinionother
                                 },
                                 yAxis: {},
                                 series: [{
@@ -248,7 +260,7 @@
                             // 3、展示数据
                             // 使用刚指定的配置项和数据显示图表。
                             this.myChart2.setOption(option);
-                        }, 1000);
+                        }, 1500);
 
                     } else {
                         this.$message.error(resp.data);
@@ -356,6 +368,7 @@
                 for (let i = 0; i < this.opinion.length; i++) {
                     this.getRequest('/sortVisit',{address: this.opinion[i],dateTime: this.value4,indoorname:this.shopMap}).then(resp => {
                         if (resp.success) {
+                            this.opinionother.push(this.opinion[i])
                             this.opinionData.push(resp.data)
                         } else {
                             this.$message.error(resp.data);
