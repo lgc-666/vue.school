@@ -3,7 +3,7 @@
       <div class="layout-head">
           <div style="float: left;font-size: 20px;margin-top: 10px;margin-right: 10px;margin-left: 25px">室内地址:</div>
           <div class="shopaddress" style="float: left;">
-              <el-select v-model="shopMap" style="width: 100px">
+              <el-select v-model="shopMap" style="width: 100px" @change="btn2">
                   <el-option v-for="(item, index) in indoordata"
                              :key="index"
                              :value="item.label"
@@ -52,6 +52,7 @@
         name: "ClassData",
         data () {
             return {
+                time:null,
                 indoordata:[],
                 shopMap:'',
 
@@ -113,16 +114,25 @@
             this.getdata()  //初始化时间
             console.log('value3值是:' + this.value3)
             console.log('value4值是:' + this.value4)
-            this.drawLine()
-            this.drawLine2()
-            this.drawLine3()
+            setTimeout(() => {
+             this.drawLine()
+             this.drawLine2()
+             this.drawLine3()
+            }, 500);
         },
         methods: {
+
             btn2(){
-                this.checkJurisdiction2 ()
+                //this.checkJurisdiction2 ()
                 this.getdata()  //初始化时间
-                this.drawLine()
-                this.drawLine2()
+                this.saveopinion3=[]
+                this.opinion3=[]
+                this.opinionData3=[]
+                setTimeout(() => {
+                 this.drawLine()
+                 this.drawLine2()
+                 this.drawLine3()
+                }, 300);
             },
             checkJurisdiction2 () {   //返回地图列表
                 this.indoordata=[]
@@ -145,7 +155,7 @@
             drawLine () {
                 this.myChart = this.$echarts.init(document.getElementById('myChart'))
 
-                this.getRequest('/listClassNoPage',{}).then(resp => {
+                this.getRequest('/listClassNoPage',{indoorname:this.shopMap}).then(resp => {
                     if (resp.success) {
                         this.addressdata=[]
                         this.opinion2=[]
@@ -214,7 +224,7 @@
                 this.myChart2 = this.$echarts.init(document.getElementById('myChart2'))
                 // 2、准备数据和配置项
                 //获取区域列表
-                this.getRequest('/listClassNoPage',{}).then(resp => {
+                this.getRequest('/listClassNoPage',{indoorname:this.shopMap}).then(resp => {
                     if (resp.success) {
                         this.addressdata=[]
                         this.opinion=[]
@@ -273,8 +283,15 @@
                 this.myChart3 = this.$echarts.init(document.getElementById('myChart3'))
 
                 // 2、准备数据和配置项
-                this.getRequest('/listClassNoPage',{}).then(resp => {
+                this.getRequest('/listClassNoPage',{indoorname:this.shopMap}).then(resp => {
                     if (resp.success) {
+                        //先清除定时器
+                        if(this.timer!=null){
+                            clearInterval(this.timer);　　// 清除定时器
+                            this.timer = null;
+                        }
+
+                        this.opinion3=[]
                         this.addressdata=[]
                         console.log('data是:' + resp.data)
                         for (let i = 0; i < resp.data.length; i++) {
@@ -291,6 +308,7 @@
                             if(window.sessionStorage.getItem("user")!=null) {  //防止退出后仍然继续请求
                                 this.opinionData3= []    //重新初始化
                                 this.saveopinion3=[]
+                                //this.opinion3=[]
                                 this.sortNow()
                             }
                             setTimeout(() => {
@@ -334,8 +352,9 @@
                                 // 使用刚指定的配置项和数据显示图表。
                                 this.myChart3.setOption(option);
                                 this.saveopinion3=[]
+
                             }, 1000);
-                        }, 3000)
+                        }, 4000)
                     } else {
                         this.$message.error(resp.data);
                     }

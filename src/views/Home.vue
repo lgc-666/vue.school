@@ -8,8 +8,8 @@
                         {{user.username}}<i class="el-icon-arrow-down el-icon--right"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command="userinfo" divided>个人中心</el-dropdown-item>
-                        <el-dropdown-item command="setting" divided>设置</el-dropdown-item>
+                        <el-dropdown-item command="userinfo" divided>个人信息</el-dropdown-item>
+                        <el-dropdown-item command="setting" divided>密码修改</el-dropdown-item>
                         <el-dropdown-item command="logout" divided>注销登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
@@ -37,10 +37,57 @@
                     <el-main>
                         <router-view/>
                     </el-main>
+                    <el-dialog
+                            title="个人信息：下面的插槽title会替换title显示的内容"
+                            :visible.sync="centerDialogVisible"
+                            width="30%"
+                            center>
+                        <div slot="title" class="header-title">
+                            <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+                        </div>
+                        <el-table
+                                :data="list"
+                                style="width: 100%">
+                            <el-table-column
+                                    prop="personName"
+                                    label="姓名"
+                                    width="60">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="personRole"
+                                    label="角色"
+                                    width="100">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="personMac"
+                                    label="mac"
+                                    width="140">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="personSalt"
+                                    label="salt">
+                            </el-table-column>
+                        </el-table>
+                        <span slot="footer" class="dialog-footer">
+                          <el-button type="primary" @click="centerDialogVisible = false">关 闭</el-button>
+                        </span>
+                    </el-dialog>
+                    <el-dialog :title="'操作账号：'+user.username" :visible.sync="dialogFormVisible2" width="400px">
+                        <el-form :model="form">
+                            <el-form-item label="请输入新密码">
+                                <el-input v-model="form.newpassword"></el-input>
+                            </el-form-item>
+                        </el-form>
+                        <div slot="footer" class="dialog-footer">
+                            <el-button @click="dialogFormVisible2 = false">取 消</el-button>
+                            <el-button type="primary" @click="updatePassword">确 定</el-button>
+                        </div>
+                    </el-dialog>
                 </el-container>
             </el-container>
         </el-container>
     </div>
+
 </template>
 
 <script>
@@ -50,6 +97,20 @@
         name: "Home",
         data(){
             return{
+                dialogFormVisible2: false,
+                form: {
+                    newpassword: '',
+                },
+                list: [{
+                    personName: '',
+                    personMac: '',
+                    personSalt: '',
+                    personRole: ''
+                }],
+                personUid:'',
+                size: 8, //每页的数据条数
+                start: 0, //默认开始页面
+                centerDialogVisible: false,
                 user:JSON.parse(window.sessionStorage.getItem("user")),
             }
         },
@@ -62,6 +123,7 @@
              }
         },
         methods:{
+            //cmd命令控制
             commandHandler(cmd){
                 if(cmd=='logout'){
                     this.$confirm('此操作将注销登录, 是否继续?', '提示', {
@@ -81,11 +143,54 @@
                         });
                     });
                 }
+                else if (cmd=='userinfo'){
+                        this.list=[],
+                        this.getRequest('/listUserSearch',{staffdata:this.user.username,start:this.start,size:this.size}).then(resp => {
+                            console.log('值是:' + resp.success)
+                            if (resp.success) {
+                                    let add = {}
+                                    add.personName = resp.data.list[0].username;
+                                    add.personMac = resp.data.list[0].mac;
+                                    add.personSalt = resp.data.list[0].salt;
+                                    add.personRole = this.user.roledesc;
+                                    this.list.push(add)
+                            } else {
+                                this.$message.error(JSON.stringify(resp.data));
+                            }
+                        })
+                        this.dialogFormVisible2 = false
+                        this.centerDialogVisible = true
+                }
+                else if (cmd=='setting'){
+                    this.list=[],
+                        this.getRequest('/listUserSearch',{staffdata:this.user.username,start:this.start,size:this.size}).then(resp => {
+                            console.log('值是:' + resp.success)
+                            if (resp.success) {
+                                this.personUid = resp.data.list[0].uid;
+                            } else {
+                                this.$message.error(JSON.stringify(resp.data));
+                            }
+                        })
+                    this.centerDialogVisible = false
+                    this.dialogFormVisible2 = true
+                }
             },
             memuClick(index){
                 console.log(index);
                 this.$router.push(index);
-            }
+            },
+
+
+            updatePassword(){
+                this.putRequest('/updatePassword',{newpassword:this.form.newpassword,uid:this.personUid}).then(resp => {
+                    if (resp.success) {
+                        this.$message.success(resp.data)
+                    } else {
+                        this.$message.error(JSON.stringify(resp.data));
+                    }
+                })
+                this.dialogFormVisible2 = false
+            },
         }
     }
 </script>

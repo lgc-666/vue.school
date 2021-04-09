@@ -191,7 +191,7 @@
         },
         methods: {
             checkJurisdiction () {   //返回区域列表
-                this.getRequest('/listClassNoPage',{}).then(resp => {
+                this.getRequest('/listClassNoPage2',{}).then(resp => {
                     if (resp.success) {
                         console.log('data的长度是:' + resp.data.length)
                         for (let i = 0; i < resp.data.length; i++) {

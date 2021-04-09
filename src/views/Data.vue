@@ -299,7 +299,9 @@
         },
         created () {
             this.checkJurisdiction2 ()
-            this.judge()
+            setTimeout(() => {
+              this.judge()
+            }, 200);
         },
 
         beforeDestroy () {
@@ -340,7 +342,8 @@
             },
 
             checkJurisdiction () {   //返回区域列表
-                this.getRequest('/listClassNoPage',{}).then(resp => {
+                this.addressdata=[]
+                this.getRequest('/listClassNoPage',{indoorname:this.shopMap}).then(resp => {
                     if (resp.success) {
                         console.log('data的长度是:' + resp.data.length)
                         for (let i = 0; i < resp.data.length; i++) {
@@ -450,7 +453,7 @@
             },
 
             Refresh () {  //新添加的区域加入选择列表
-                this.getRequest('/listClassNoPage',{}).then(resp => {
+                this.getRequest('/listClassNoPage',{indoorname:this.shopMap}).then(resp => {
                     if (resp.success) {
                         this.addressdata=[]
                         console.log('data是:' + resp.data)
@@ -489,6 +492,9 @@
 
             changeaddress2 () {   //通过选择按钮改变所选地图
                 window.sessionStorage.setItem('address2', JSON.stringify(this.shopMap))
+                setTimeout(() => {
+                    this.checkJurisdiction()
+                }, 200);
                 this.gettoday()
             },
 

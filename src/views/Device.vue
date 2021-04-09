@@ -125,6 +125,7 @@
                 <el-form-item label="设备状态">
                     <el-input v-model="form2.devicevalue"></el-input>
                 </el-form-item>
+
                 <el-form-item label="所在区域">
                     <el-select v-model="form2.location" placeholder="设备安放的区域">
                         <el-option v-for="(item, index) in addressdata"
@@ -134,6 +135,7 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
+
                 <el-form-item label="所属室内地图">
                     <el-select v-model="form2.indoorname" placeholder="请选择所属室内地图">
                         <el-option v-for="(item, index) in indoordata"
@@ -215,13 +217,13 @@
             }
         },
         mounted () {
-            this.checkJurisdiction()
             this.checkJurisdiction2()
+            this.checkJurisdiction()
             this.init()
         },
         methods: {
             checkJurisdiction () {   //返回区域列表
-                this.getRequest('/listClassNoPage',{}).then(resp => {
+                this.getRequest('/listClassNoPage2',{}).then(resp => {
                     if (resp.success) {
                         console.log('data的长度是:' + resp.data.length)
                         for (let i = 0; i < resp.data.length; i++) {
