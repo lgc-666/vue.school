@@ -72,7 +72,7 @@
                           <el-button type="primary" @click="centerDialogVisible = false">关 闭</el-button>
                         </span>
                     </el-dialog>
-                    <el-dialog :title="'操作账号：'+user.username" :visible.sync="dialogFormVisible2" width="400px">
+                    <el-dialog :title="'当前操作账号：'+user.username" :visible.sync="dialogFormVisible2" width="400px">
                         <el-form :model="form">
                             <el-form-item label="请输入新密码">
                                 <el-input v-model="form.newpassword"></el-input>

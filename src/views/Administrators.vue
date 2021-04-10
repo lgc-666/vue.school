@@ -92,20 +92,11 @@
                 })
             },
 
-            //鼠标点击
+            //鼠标点击(实现地图坐标与室内地图的关联)
             addMouseclick (myMarker, address, name, longitude,latitude,fmapid, point, map) {
                 myMarker.addEventListener('click', e => {
-                    this.gridData=[]
-                    let add = {}
-                    add.name=name
-                    add.address=address
-                    add.fmapid=fmapid
-                    add.longitude=longitude
-                    add.latitude=latitude
-                    //将列表放到数组
-                    this.gridData.push(add)
-                    //false变true显示
-                    this.table=!this.table
+                    this.$router.replace("/map");  //页面跳转
+                    window.sessionStorage.setItem("indoor", JSON.stringify(address))
                 })
             },
 

@@ -153,7 +153,7 @@
                 title="请选择室内地图"
                 :visible.sync="dialogVisible2"
                 width="30%">
-            <el-select v-model="shopMap" style="width: 250px;margin-left: 50px">
+            <el-select v-model="shopMap" style="width: 250px;margin-left: 50px" @click="chooceaddress2">
                 <el-option v-for="(item, index) in indoordata"
                            :key="index"
                            :value="item.label"
@@ -176,7 +176,7 @@
                 indoordata:[],
                 shopMap:'',
 
-                dialogVisible2: true,
+                dialogVisible2: false,
                 dialogVisible: false,
                 dialogVisiblebystaff: false,
                 value: '',
@@ -301,7 +301,7 @@
             this.checkJurisdiction2 ()
             setTimeout(() => {
               this.judge()
-            }, 200);
+            }, 400);
         },
 
         beforeDestroy () {
@@ -375,8 +375,8 @@
             },
             init () {  //初始化
                 if (this.$store.state.shopflag === false) { // 刚从登录页面过来需要弹窗
-                    this.dialogVisible = true
                     this.dialogVisible2 = true
+                    this.dialogVisible = true
                     this.shopaddress2 = this.addressdata[0].label
 
                 } else {
@@ -479,6 +479,9 @@
             chooceaddress2 () {  //选择室内地图
                 window.sessionStorage.setItem('address2', JSON.stringify(this.shopMap))
                 this.dialogVisible2 = false
+                setTimeout(() => {
+                    this.checkJurisdiction()
+                }, 100);
             },
 
             destroyed () {

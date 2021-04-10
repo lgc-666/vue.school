@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80015
 File Encoding         : 65001
 
-Date: 2021-02-25 22:12:58
+Date: 2021-04-10 16:00:15
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -31,11 +31,12 @@ CREATE TABLE `stop_visit` (
   `handleJudge` int(11) DEFAULT NULL,
   `mac` varchar(255) DEFAULT NULL,
   `rssi` int(11) DEFAULT NULL,
+  `indoorname` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`stop_visit_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of stop_visit
 -- ----------------------------
-INSERT INTO `stop_visit` VALUES ('46', '办公区', '0', '2021-02-22 00:31:09', '2021-02-22 00:31:15', '6', '2', '2021-02-22 00:31:15', '0', '68:c6:33:85:21:11', '-89');
-INSERT INTO `stop_visit` VALUES ('47', '办公区', '0', '2021-02-22 00:31:09', '2021-02-22 00:31:15', '6', '2', '2021-02-22 00:31:15', '0', '68:c6:33:85:21:12', '-89');
+INSERT INTO `stop_visit` VALUES ('46', '办公区', '0', '2021-02-22 00:31:09', '2021-02-22 00:31:15', '6', '2', '2021-02-22 00:31:15', '0', '68:c6:33:85:21:11', '-89', 'za102');
+INSERT INTO `stop_visit` VALUES ('47', '办公区', '0', '2021-02-22 00:31:09', '2021-02-22 00:31:15', '6', '2', '2021-02-22 00:31:15', '0', '68:c6:33:85:21:12', '-89', 'za102');

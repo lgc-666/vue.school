@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80015
 File Encoding         : 65001
 
-Date: 2021-02-25 22:12:43
+Date: 2021-04-10 16:00:04
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -24,7 +24,7 @@ CREATE TABLE `role_permission` (
   `rid` int(11) DEFAULT NULL,
   `pid` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=87 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of role_permission
@@ -61,3 +61,14 @@ INSERT INTO `role_permission` VALUES ('72', '3', '12');
 INSERT INTO `role_permission` VALUES ('73', '3', '6');
 INSERT INTO `role_permission` VALUES ('74', '3', '1');
 INSERT INTO `role_permission` VALUES ('75', '3', '20');
+INSERT INTO `role_permission` VALUES ('76', '3', '22');
+INSERT INTO `role_permission` VALUES ('77', '3', '21');
+INSERT INTO `role_permission` VALUES ('78', '3', '23');
+INSERT INTO `role_permission` VALUES ('79', '2', '23');
+INSERT INTO `role_permission` VALUES ('80', '2', '22');
+INSERT INTO `role_permission` VALUES ('81', '2', '21');
+INSERT INTO `role_permission` VALUES ('82', '2', '20');
+INSERT INTO `role_permission` VALUES ('83', '1', '23');
+INSERT INTO `role_permission` VALUES ('84', '1', '24');
+INSERT INTO `role_permission` VALUES ('85', '2', '24');
+INSERT INTO `role_permission` VALUES ('86', '3', '24');

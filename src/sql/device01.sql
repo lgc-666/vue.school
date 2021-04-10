@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80015
 File Encoding         : 65001
 
-Date: 2021-02-25 22:10:26
+Date: 2021-04-10 15:58:27
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -31,14 +31,15 @@ CREATE TABLE `device01` (
   `owner` varchar(255) DEFAULT NULL,
   `ip` varchar(255) DEFAULT NULL,
   `port` int(11) DEFAULT NULL,
+  `indoorname` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`deviceid`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of device01
 -- ----------------------------
-INSERT INTO `device01` VALUES ('2', '报警器1', '9624478', '5', '0', '休息区', '1614123940', '2021-02-24 07:45:40', 'oIhmL5Z5bGab47IKgq54ZEFWuDY4', '192.168.1.105', '8080');
-INSERT INTO `device01` VALUES ('3', '报警器2', '9624474', '5', '0', '办公区', '1614231844', '2021-02-25 13:44:04', 'oIhmL5Y8KSswcYJhroLc09U-23hA', '192.168.1.105', '8080');
-INSERT INTO `device01` VALUES ('6', '灯1', '9624444', '6', '0', '展示区', '1614231926', '2021-02-25 13:45:26', 'oIhmL5Y8KSswcYJhroLc09U-23hA', '192.168.1.105', '8080');
-INSERT INTO `device01` VALUES ('7', '灯2', '9624475', '6', '0', '销售区', '1614231927', '2021-02-25 13:45:27', 'oIhmL5Y8KSswcYJhroLc09U-23hA', '192.168.1.105', '8080');
-INSERT INTO `device01` VALUES ('8', '灯3', '9624476', '6', '0', '休息区', '1614231927', '2021-02-25 13:45:27', 'oIhmL5Y8KSswcYJhroLc09U-23hA', '192.168.1.105', '8080');
+INSERT INTO `device01` VALUES ('2', '报警器1', '9624478', '5', '0', '休息区', '1614123940', '2021-02-24 07:45:40', 'oIhmL5Z5bGab47IKgq54ZEFWuDY4', '192.168.1.105', '8080', 'za102');
+INSERT INTO `device01` VALUES ('3', '报警器2', '9624474', '5', '0', '办公区', '1616959542', '2021-03-29 03:25:42', 'oIhmL5Y8KSswcYJhroLc09U-23hA', '192.168.1.112', '8080', 'za102');
+INSERT INTO `device01` VALUES ('6', '灯1', '9624444', '6', '0', '展示区', '1617394919', '2021-04-03 04:21:59', 'oIhmL5Y8KSswcYJhroLc09U-23hA', '192.168.1.112', '8080', 'za102');
+INSERT INTO `device01` VALUES ('7', '灯2', '9624475', '6', '0', '销售区', '1617394917', '2021-04-03 04:21:57', 'oIhmL5Y8KSswcYJhroLc09U-23hA', '192.168.1.112', '8080', 'za102');
+INSERT INTO `device01` VALUES ('8', '灯3', '9624476', '6', '0', '休息区', '1617394918', '2021-04-03 04:21:58', 'oIhmL5Y8KSswcYJhroLc09U-23hA', '192.168.1.112', '8080', 'za102');
