@@ -74,7 +74,7 @@
             </el-row>
         </div>
         <div class="statistics-layout">
-            <div class="layout-title" style="background-color: white;margin-right: 30px;text-align: center">小时人流量统计</div>
+            <div class="layout-title" style="background-color: white;margin-right: 30px;text-align: center">小时区域外人流量统计</div>
             <el-row>
                 <el-col :span="20">
                     <div style="padding: 10px;width: 100%;">

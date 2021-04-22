@@ -1,10 +1,10 @@
 let proxyObj = {};
-proxyObj['/za102'] = {
+proxyObj['/'] = {
     ws:true,
-    target: 'http://liaoguanchang.top:8081',
+    target: 'http://localhost:8081',
     changeOrigin: true,
     pathRewrite:{  //不修改拦截地址
-        '^/za102':''
+        '^/':''
     }
 }
 module.exports = {

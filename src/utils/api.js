@@ -41,7 +41,7 @@ axios.interceptors.response.use(success=>{
     return;
 })
 
-let base = '/za102';
+let base = '';
 
 export const postKeyValueRequest=(url,params)=>{  //只是登录用（Spring Security 中默认的登录数据格式就是 key/value 的形式）
     return axios({
