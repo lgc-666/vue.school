@@ -77,7 +77,7 @@
                 })
             },
             handlecheck(row){
-                this.postKeyValueRequest('/agreeregisterApproval',{agreeid:row.id}).then(resp => {
+                this.postKeyValueRequest('/agreeregisterApproval',{agreeid:row.id, rolename:row.rolename}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
                         this.btn2()

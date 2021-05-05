@@ -57,7 +57,13 @@
                     <el-input v-model="form3.latitude" placeholder="百度地图中的维度"></el-input>
                 </el-form-item>
                 <el-form-item label="负责人">
-                    <el-input v-model="form3.charge" placeholder="该室内场所的负责人"></el-input>
+                    <el-select v-model="form3.charge" placeholder="该室内场所的负责人">
+                        <el-option v-for="(item, index) in chargedata"
+                                   :key="index"
+                                   :value="item.label"
+                                   :label="item.label">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -81,7 +87,13 @@
                     <el-input v-model="form4.latitude" placeholder="百度地图中的维度"></el-input>
                 </el-form-item>
                 <el-form-item label="负责人">
-                    <el-input v-model="form4.charge" placeholder="该室内场所的负责人"></el-input>
+                    <el-select v-model="form4.charge" placeholder="请选择该室内场所的负责人">
+                        <el-option v-for="(item, index) in chargedata"
+                                   :key="index"
+                                   :value="item.label"
+                                   :label="item.label">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -123,9 +135,11 @@
                     latitude:'',
                     charge:''
                 },
+                chargedata:[]
             }
         },
         mounted () {
+            this.checkJurisdiction2()
             this.init()
         },
         methods: {
@@ -150,6 +164,24 @@
                     }
                 })
             },
+
+            checkJurisdiction2 () {   //返回负责人列表
+                this.getRequest('/listUserByRoleNoPage',{}).then(resp => {
+                    if (resp.success) {
+                        console.log('data的长度是:' + resp.data.length)
+                        for (let i = 0; i < resp.data.length; i++) {
+                            let add = {}
+                            add.value = i
+                            add.label = resp.data[i].username
+                            this.chargedata.push(add)
+                        }
+                        this.form4.charge = this.chargedata[0].label
+                    } else {
+                        //this.$message.error(resp.data);
+                    }
+                })
+            },
+
 
             btnquery () {
                 this.list=[],
