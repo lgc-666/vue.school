@@ -230,7 +230,11 @@
             },
             btn2 () {
                 this.list=[],
-                this.init()
+                this.deleteRequest('/deleteAllCach',{}).then(resp => {
+                })
+                setTimeout(() => {
+                    this.init()
+                }, 100);
             },
 
             /**

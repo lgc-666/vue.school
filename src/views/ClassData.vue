@@ -128,6 +128,8 @@
                 this.saveopinion3=[]
                 this.opinion3=[]
                 this.opinionData3=[]
+                this.deleteRequest('/deleteAllCach',{}).then(resp => {
+                })
                 setTimeout(() => {
                  this.drawLine()
                  this.drawLine2()

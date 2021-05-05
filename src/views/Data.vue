@@ -23,6 +23,8 @@
                     </el-select>
                 </div>
 
+                <el-button type="primary" round @click="btn2" icon="el-icon-refresh-right" style="float: left;margin-top: 0px;margin-left: 150px">刷新</el-button>
+
                 <div class="shoptime" style="float: right">
                     <div style="float: left;font-size: 20px;margin-top: 10px;margin-right: 10px">日期:</div>
                     <el-date-picker
@@ -525,6 +527,12 @@
                 this.value2 = this.value3
                 this.changeday()
                 this.changeday1()
+            },
+            btn2 (){
+                this.$router.replace("/administrators");
+                setTimeout(() => {
+                    this.$router.replace("/data");
+                },100)
             }
         }
 

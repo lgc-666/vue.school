@@ -111,7 +111,11 @@
             },
             btn2 () {
                 this.list=[],
+                this.deleteRequest('/deleteAllCach',{}).then(resp => {
+                })
+                setTimeout(() => {
                     this.init()
+                }, 100);
             },
             backup(){
                 this.$store.state.rid = ''

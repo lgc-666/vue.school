@@ -270,7 +270,11 @@
             },
             btn2 () {
                 this.list=[],
+                this.deleteRequest('/deleteAllCach',{}).then(resp => {
+                })
+                setTimeout(() => {
                     this.init()
+                }, 100);
             },
             blurSearchFor () {
                 if (this.placeholder === '根据设备id查询设备,支持模糊查找') {

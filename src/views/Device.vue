@@ -1,8 +1,19 @@
 <template>
     <div>
         <div style="width: 100%;height: 50px">
-            <el-button type="primary" round @click="btn2" icon="el-icon-refresh-right" style="float: left;margin-top: 5px;margin-left: 30px">刷新</el-button>
+            <el-button type="info" style="float: left;margin-top: 0px;">关闭/开启自动控制
+                <el-switch
+                        v-model="valuecotrol"
+                        active-color="#13ce66"
+                        inactive-color="#ff4949"
+                        active-value="1"
+                        inactive-value="0"
+                        @change="changeSwitch2()">
+                </el-switch>
+            </el-button>
+            <el-button type="primary" round @click="btn2" icon="el-icon-refresh-right" style="float: left;margin-top: 5px;margin-left: 16px">刷新</el-button>
             <el-button type="success" round @click="btn3" icon="el-icon-circle-plus-outline" style="float: left;margin-top: 5px;">新增</el-button>
+
             <el-button type="primary" round @click="btnquery" style="margin-top: 5px;float: right;margin-left: 10px;margin-right: 10px">查询信息</el-button>
             <el-input v-model="staffdata" style="width: 250px;float: right;margin-top: 5px;" :placeholder=placeholder @focus="blurSearchFor()" @blur="blurSear" v-if="showinput"></el-input>
         </div>
@@ -174,6 +185,7 @@
         name: "Device",
         data () {
             return {
+                valuecotrol: "1",
                 listLoading: false,
                 list: [],
                 showinput: true,
@@ -217,6 +229,7 @@
             }
         },
         mounted () {
+            this.getcontrol()
             this.checkJurisdiction2()
             this.checkJurisdiction()
             this.init()
@@ -348,7 +361,11 @@
             },
             btn2 () {
                 this.list=[],
+                this.deleteRequest('/deleteAllCach',{}).then(resp => {
+                    })
+                setTimeout(() => {
                     this.init()
+                }, 100);
             },
             blurSearchFor () {
                 if (this.placeholder === '根据设备id查询设备,支持模糊查找') {
@@ -402,6 +419,22 @@
                     //} else {
                         //this.$message.error(JSON.stringify(resp.data));
                     //}
+                })
+            },
+
+            getcontrol () {
+                this.putRequest('/getcontrol',{}).then(resp => {
+                    if (resp.success) {
+                         this.valuecotrol = resp.data
+                    } else {
+                        this.$message.error(JSON.stringify(resp.data));
+                    }
+                })
+            },
+
+            changeSwitch2 () {
+                console.log("按钮值2："+this.valuecotrol)
+                this.putRequest('/updateStatus2',{status:this.valuecotrol}).then(resp => {
                 })
             }
         }
