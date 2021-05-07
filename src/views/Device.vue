@@ -225,7 +225,8 @@
                     indoorname:''
                 },
                 indoordata:[],
-                addressdata:[]
+                addressdata:[],
+                user:JSON.parse(window.sessionStorage.getItem("user"))
             }
         },
         mounted () {
@@ -236,7 +237,7 @@
         },
         methods: {
             checkJurisdiction () {   //返回区域列表
-                this.getRequest('/listClassNoPage2',{}).then(resp => {
+                this.getRequest('/listClassNoPage2',{roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
                         console.log('data的长度是:' + resp.data.length)
                         for (let i = 0; i < resp.data.length; i++) {
@@ -245,14 +246,16 @@
                             add.label = resp.data[i].adress
                             this.addressdata.push(add)
                         }
-                        this.form2.location = this.addressdata[0].label
+                        if(this.addressdata.length!=0){
+                            this.form2.location = this.addressdata[0].label
+                        }
                     } else {
                         //this.$message.error(resp.data);
                     }
                 })
             },
             checkJurisdiction2 () {   //返回地图列表
-                this.getRequest('/listMapMamageNoPage',{}).then(resp => {
+                this.getRequest('/listMapMamageNoPage',{roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
                         console.log('data的长度是:' + resp.data.length)
                         for (let i = 0; i < resp.data.length; i++) {
@@ -261,7 +264,9 @@
                             add.label = resp.data[i].indoorname
                             this.indoordata.push(add)
                         }
-                        this.form2.indoorname = this.indoordata[0].label
+                        if(this.indoordata.length!=0){
+                            this.form2.indoorname = this.indoordata[0].label
+                        }
                     } else {
                         //this.$message.error(resp.data);
                     }
@@ -269,7 +274,7 @@
             },
 
             init () {
-                this.getRequest('/listDevice',{start:this.start,size:this.size}).then(resp => {
+                this.getRequest('/listDevice',{start:this.start,size:this.size,roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
                         console.log('total是:' + resp.data.total)
                         this.total = resp.data.total;
@@ -298,7 +303,7 @@
 
             btnquery () {
                 this.list=[],
-                this.getRequest('/listDeviceSearch',{staffdata:this.staffdata,start:this.start,size:this.size}).then(resp => {
+                this.getRequest('/listDeviceSearch',{staffdata:this.staffdata,start:this.start,size:this.size,roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
                         console.log('total是:' + resp.data.total)
                         this.total = resp.data.total;

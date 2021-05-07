@@ -157,7 +157,8 @@
                     y2:'',
                     indoorname:''
                 },
-                indoordata:[]
+                indoordata:[],
+                user:JSON.parse(window.sessionStorage.getItem("user"))
             }
         },
         mounted () {
@@ -166,7 +167,7 @@
         },
         methods: {
             checkJurisdiction2 () {   //返回地图列表
-                this.getRequest('/listMapMamageNoPage',{}).then(resp => {
+                this.getRequest('/listMapMamageNoPage',{roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
                         console.log('data的长度是:' + resp.data.length)
                         for (let i = 0; i < resp.data.length; i++) {
@@ -175,7 +176,9 @@
                             add.label = resp.data[i].indoorname
                             this.indoordata.push(add)
                         }
-                        this.form2.indoorname = this.indoordata[0].label
+                        if(this.indoordata.length!=0){
+                            this.form2.indoorname = this.indoordata[0].label
+                        }
                     } else {
                         //this.$message.error(resp.data);
                     }
@@ -183,7 +186,7 @@
             },
 
             init () {
-                this.getRequest('/listClass',{start:this.start,size:this.size}).then(resp => {
+                this.getRequest('/listClass',{start:this.start,size:this.size,roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
                         console.log('total是:' + resp.data.total)
                         this.total = resp.data.total;
@@ -207,8 +210,8 @@
             },
 
             btnquery () {
-                this.list=[],l
-                this.getRequest('/listClassSearch',{staffdata:this.staffdata,start:this.start,size:this.size}).then(resp => {
+                this.list=[],
+                this.getRequest('/listClassSearch',{staffdata:this.staffdata,start:this.start,size:this.size,roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
                         console.log('total是:' + resp.data.total)
                         this.total = resp.data.total;
@@ -277,12 +280,12 @@
                 }, 100);
             },
             blurSearchFor () {
-                if (this.placeholder === '根据设备id查询设备,支持模糊查找') {
+                if (this.placeholder === '可以根据区域名模糊查询') {
                     this.placeholder = ''
                 }
             },
             blurSear () {
-                this.placeholder = '根据设备id查询设备,支持模糊查找'
+                this.placeholder = '可以根据区域名模糊查询'
             },
             btn3(){
                 this.dialogFormVisible2 = true

@@ -221,12 +221,12 @@
             },
 
             blurSearchFor () {
-                if (this.placeholder === '根据设备id查询设备,支持模糊查找') {
+                if (this.placeholder === '可以根据姓名,工号,用户名模糊查询') {
                     this.placeholder = ''
                 }
             },
             blurSear () {
-                this.placeholder = '根据设备id查询设备,支持模糊查找'
+                this.placeholder = '可以根据姓名,工号,用户名模糊查询'
             },
             btn2 () {
                 this.list=[],

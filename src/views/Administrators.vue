@@ -14,6 +14,7 @@
             return{
                 table: false,
                 gridData: [],
+                user:JSON.parse(window.sessionStorage.getItem("user"))
             }
         },
 
@@ -23,7 +24,7 @@
         methods:{
             //地图设置
             mapReady({ BMap, map }) {
-                this.getRequest('/listMapMamageNoPage',{}).then(resp => {
+                this.getRequest('/listMapMamageNoPage2',{}).then(resp => {
                     if (resp.success) {
                         for (let i = 0; i < resp.data.length; i++){
                             let address = resp.data[i].indoorname

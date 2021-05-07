@@ -296,7 +296,8 @@
                 addressdata: [],
                 addressdatabystaff: [],
                 timer: null,
-                flaghaveshop: false // 判断这人有没有店铺
+                flaghaveshop: false, // 判断这人有没有店铺
+                user:JSON.parse(window.sessionStorage.getItem("user"))
             }
         },
         created () {
@@ -311,7 +312,7 @@
         },
         methods: {
             checkJurisdiction2 () {   //返回地图列表
-                this.getRequest('/listMapMamageNoPage',{}).then(resp => {
+                this.getRequest('/listMapMamageNoPage',{roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
                         console.log('data的长度是:' + resp.data.length)
                         for (let i = 0; i < resp.data.length; i++) {
@@ -325,8 +326,10 @@
                             this.shopMap = JSON.parse(window.sessionStorage.getItem('address2'))
                         }
                         else{
-                            this.shopMap = this.indoordata[0].label
-                            window.sessionStorage.setItem("address2", JSON.stringify(this.indoordata[0].label));
+                            if(this.indoordata.length!=0){
+                                this.shopMap = this.indoordata[0].label
+                                window.sessionStorage.setItem("address2", JSON.stringify(this.indoordata[0].label));
+                            }
                         }
                     } else {
                         //this.$message.error(resp.data);
@@ -354,7 +357,9 @@
                             add.label = resp.data[i].adress
                             this.addressdata.push(add)
                         }
-                        this.shopaddress2 = this.addressdata[0].label
+                        if(this.addressdata.length!=0){
+                            this.shopaddress2 = this.addressdata[0].label
+                        }
                     } else {
                         //this.$message.error(resp.data);
                     }
@@ -379,8 +384,9 @@
                 if (this.$store.state.shopflag === false) { // 刚从登录页面过来需要弹窗
                     this.dialogVisible2 = true
                     this.dialogVisible = true
-                    this.shopaddress2 = this.addressdata[0].label
-
+                    if(this.addressdata.length!=0){
+                        this.shopaddress2 = this.addressdata[0].label
+                    }
                 } else {
                     this.dialogVisible = false // 表示登录过了无需在弹窗
                     this.dialogVisible2 = false

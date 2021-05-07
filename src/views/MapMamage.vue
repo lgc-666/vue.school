@@ -175,7 +175,9 @@
                             add.label = resp.data[i].username
                             this.chargedata.push(add)
                         }
-                        this.form4.charge = this.chargedata[0].label
+                        if(this.chargedata.length!=0){
+                            this.form4.charge = this.chargedata[0].label
+                        }
                     } else {
                         //this.$message.error(resp.data);
                     }
@@ -260,12 +262,12 @@
             },
 
             blurSearchFor () {
-                if (this.placeholder === '根据设备id查询设备,支持模糊查找') {
+                if (this.placeholder === '根据负责人查询室内地图,支持模糊查找') {
                     this.placeholder = ''
                 }
             },
             blurSear () {
-                this.placeholder = '根据设备id查询设备,支持模糊查找'
+                this.placeholder = '根据负责人查询室内地图,支持模糊查找'
             },
 
             /**

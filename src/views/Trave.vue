@@ -54,6 +54,7 @@
                 flag:'',
                 indoordata:[],
                 shopMap:'',
+                user:JSON.parse(window.sessionStorage.getItem("user"))
             }
         },
         mounted () {
@@ -68,7 +69,7 @@
                 this.btn1()
             },
             checkJurisdiction2 () {   //返回地图列表
-                this.getRequest('/listMapMamageNoPage',{}).then(resp => {
+                this.getRequest('/listMapMamageNoPage',{roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
                         console.log('data的长度是:' + resp.data.length)
                         for (let i = 0; i < resp.data.length; i++) {
@@ -82,8 +83,10 @@
                             this.shopMap=JSON.parse(window.sessionStorage.getItem("indoor"))
                         }
                         else {
-                            this.shopMap = this.indoordata[0].label
-                            window.sessionStorage.setItem("indoor", JSON.stringify(this.indoordata[0].label));
+                            if(this.indoordata.length!=0){
+                                this.shopMap = this.indoordata[0].label
+                                window.sessionStorage.setItem("indoor", JSON.stringify(this.indoordata[0].label));
+                            }
                         }
 
                         if(window.sessionStorage.getItem("start3")===null||window.sessionStorage.getItem("end3")===null||window.sessionStorage.getItem("start3")===''||window.sessionStorage.getItem("end3")===''){
