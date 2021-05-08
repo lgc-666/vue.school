@@ -15,7 +15,8 @@ module.exports = {
     },
     configureWebpack: {
         externals: {
-            "BMap": "BMap"
+            "BMap": "BMap",
+            "BMapLib": "BMapLib"
         }
     }
 }
