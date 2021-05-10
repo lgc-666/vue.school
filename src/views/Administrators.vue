@@ -4,8 +4,16 @@
         <el-button type="success" round @click="btn1" icon="el-icon-refresh-right" style="float: left;margin-top: 5px;margin-left: 30px">刷新</el-button>
         <el-button type="primary" round @click="openHeatmap" icon="el-icon-refresh-right" style="float: left;margin-top: 5px;">显示热力图</el-button>
         <el-button type="info" round @click="closeHeatmap" icon="el-icon-refresh-right" style="float: left;margin-top: 5px;">关闭热力图</el-button>
-        <el-button type="primary" round style="margin-top: 5px;float: right;margin-left: 10px;margin-right: 10px">查询信息</el-button>
-        <el-input v-model="staffdata" style="width: 250px;float: right;margin-top: 5px;" :placeholder=placeholder @focus="blurSearchFor()" @blur="blurSear" v-if="showinput"></el-input>
+        <el-time-picker style="margin-left: 220px;margin-top: 5px;" @change="changeaddress"
+                        is-range
+                        v-model="value6"
+                        range-separator="至"
+                        start-placeholder="当天开始时间"
+                        end-placeholder="当天结束时间"
+                        placeholder="选择时间范围">
+        </el-time-picker>
+        <el-button type="primary" round @click="location" style="margin-top: 5px;float: right;margin-left: 10px;margin-right: 10px">查询信息</el-button>
+        <el-input v-model="staffdata2" style="width: 250px;float: right;margin-top: 5px;" :placeholder=placeholder @focus="blurSearchFor()" @blur="blurSear" v-if="showinput"></el-input>
     </div>
     <div style="width: 100%;height: 780px">
     <baidu-map
@@ -28,11 +36,13 @@
                 user:JSON.parse(window.sessionStorage.getItem("user")),
                 showinput: true,
                 placeholder: '根据mac地址查询路径',
-                staffdata:'',
+                staffdata2:'',
                 points: [],
                 heatmapOverlay: {},// 热力图覆盖物,
                 map: '',// 保存地图实例
-                indoornameMap:[]
+                indoornameMap:[],
+                trackPoint:[],
+                value6: [new Date(),new Date()],
             }
         },
 
@@ -40,6 +50,147 @@
                 this.sum()
         },
         methods:{
+            changeaddress () {   //通过选择按钮改变所选区域
+                window.sessionStorage.setItem("start4", this.value6[0])
+                window.sessionStorage.setItem("end4", this.value6[1])
+            },
+            btn3 () {
+                this.$router.replace("/machine");
+                setTimeout(() => {
+                    this.$router.replace("/administrators");
+                },100)
+                console.log('坐标已显示');
+            },
+            //时间转化：“2020-10-09 14:50:01”格式
+            formateDate(datetime) {
+                function addDateZero(num) {
+                    return (num < 10 ? "0" + num : num);
+                }
+                let c = new Date()
+                let d = new Date(datetime);
+                let formatdatetime = c.getFullYear() + '-' + addDateZero(c.getMonth() + 1) + '-' + addDateZero(c.getDate()) + ' ' + addDateZero(d.getHours()) + ':' + addDateZero(d.getMinutes()) + ':' + addDateZero(d.getSeconds());
+                return formatdatetime;
+            },
+            location(){
+                    //this.injude()
+                this.sum()
+                this.map.clearOverlays();                        //清除地图上所有的覆盖物
+                setTimeout(() => {
+                    this.getRequest('/listMapMamageNoPage2',{}).then(resp => {
+                        if (resp.success) {
+                            for (let i = 0; i < resp.data.length; i++){
+                                let address = resp.data[i].indoorname
+                                let longitude = resp.data[i].longitude
+                                let latitude = resp.data[i].latitude
+                                let charge = resp.data[i].charge
+                                let fmapid = resp.data[i].fmapid
+
+                                let d = this.indoornameMap[address]
+                                console.log('map值2是:' + d)
+                                let add = {}
+                                add.lng = longitude
+                                add.lat = latitude
+                                add.count = d
+                                this.points.push(add)
+
+                                // 选择一个经纬度作为中心点
+                                let point = new BMap.Point(longitude,latitude);
+                                this.map.centerAndZoom(point, 30); //地图级别为30
+                                let myMarker = new BMap.Marker(point)
+                                myMarker.setAnimation("BMAP_ANIMATION_DROP")
+                                myMarker.setTop('true');
+                                let gc = new BMap.Geocoder()
+                                gc.getLocation(point, res => {  //将位置坐标与事件进行绑定
+                                    this.map.addOverlay(myMarker)   //给地图添加坐标
+                                    this.addMouseover(myMarker, address, charge,longitude,latitude,fmapid, point,d, this.map)
+                                    this.addMouseout(myMarker, address, charge,longitude,latitude,fmapid, point,d, this.map)
+                                    this.addMouseclick(myMarker, address, charge,longitude,latitude,fmapid, point,d, this.map)
+                                })
+                            }
+                            //console.log('map值3是:' + this.points)
+                        } else {
+                            this.$message.error(resp.data);
+                        }
+                    })
+                }, 200);
+                if (this.staffdata2 === '') {
+                } else {
+                    window.sessionStorage.setItem('staffdata2', this.staffdata2)
+                    setTimeout(() => {
+                        this.points=[]
+                        this.trackPoint=[]
+                        this.getRequest('/mapByMac', {
+                            mac: window.sessionStorage.getItem("staffdata2"),
+                            start: this.formateDate(window.sessionStorage.getItem("start4")),
+                            end: this.formateDate(window.sessionStorage.getItem("end4"))
+                        }).then(resp => {
+                            if (resp.success) {
+                                for (let i = 0; i < resp.data.length; i++) {
+                                    let address = resp.data[i].indoorname
+                                    let longitude = resp.data[i].longitude
+                                    let latitude = resp.data[i].latitude
+                                    let charge = resp.data[i].charge
+                                    let fmapid = resp.data[i].fmapid
+
+                                    let d = this.indoornameMap[address]
+                                    console.log('map值2是:' + d)
+                                    let add = {}
+                                    add.lng = longitude
+                                    add.lat = latitude
+                                    add.count = d
+                                    this.points.push(add)
+
+                                    // 选择一个经纬度作为中心点
+                                    let point = new BMap.Point(longitude, latitude);
+                                    this.trackPoint.push(point);
+                                    this.map.centerAndZoom(point, 30); //地图级别为30
+                                    let myMarker = new BMap.Marker(point)
+                                    myMarker.setAnimation("BMAP_ANIMATION_DROP")   //跳动的动画
+                                    myMarker.setTop('true');   //强制按显示顺序显示，每个新坐标都在最前面
+                                    let gc = new BMap.Geocoder()
+                                    if(i===(resp.data.length-1)||resp.data.length===1){ //终点
+                                        gc.getLocation(point, res => {  //将位置坐标与事件进行绑定
+                                            this.map.addOverlay(myMarker)   //给地图添加坐标
+                                            this.addMouseover2(myMarker, address, charge, longitude, latitude, fmapid, point, d, this.map,'终点')
+                                            this.addMouseout2(myMarker, address, charge, longitude, latitude, fmapid, point, d, this.map,'终点')
+                                            this.addMouseclick(myMarker, address, charge, longitude, latitude, fmapid, point, d, this.map)
+                                        })
+                                    }
+                                    else if(i===0){ //起点
+                                        gc.getLocation(point, res => {  //将位置坐标与事件进行绑定
+                                            this.map.addOverlay(myMarker)   //给地图添加坐标
+                                            this.addMouseover2(myMarker, address, charge, longitude, latitude, fmapid, point, d, this.map,'起点')
+                                            this.addMouseout2(myMarker, address, charge, longitude, latitude, fmapid, point, d, this.map,'起点')
+                                            this.addMouseclick(myMarker, address, charge, longitude, latitude, fmapid, point, d, this.map)
+                                        })
+                                    }
+                                    else{ //途经点
+                                        gc.getLocation(point, res => {  //将位置坐标与事件进行绑定
+                                            this.map.addOverlay(myMarker)   //给地图添加坐标
+                                            this.addMouseover2(myMarker, address, charge, longitude, latitude, fmapid, point, d, this.map,'途径点')
+                                            this.addMouseout2(myMarker, address, charge, longitude, latitude, fmapid, point, d, this.map,'途径点')
+                                            this.addMouseclick(myMarker, address, charge, longitude, latitude, fmapid, point, d, this.map)
+                                        })
+                                    }
+                                }
+
+                                // 画线
+                                var polyline = new BMap.Polyline(this.trackPoint, {
+                                    strokeColor: "#1869AD",
+                                    strokeWeight: 3,
+                                    strokeOpacity: 1
+                                });
+                                this.map.addOverlay(polyline);
+                                this.trackPoint = []
+                                //console.log('map值3是:' + this.points)
+                            } else {
+                                this.$message.error(resp.data);
+                            }
+                        })
+                    }, 400);
+                }
+            },
+
             //地图设置
             mapReady({ BMap, map }) {
                 setTimeout(() => {
@@ -82,7 +233,22 @@
             }, 200);
             },
 
+            injude(){
+                if(window.sessionStorage.getItem("start4")===null||window.sessionStorage.getItem("end4")===null||window.sessionStorage.getItem("start4")===''||window.sessionStorage.getItem("end4")===''){
+                    console.log('value3值是:' + this.value6[0])
+                    window.sessionStorage.setItem("start4", this.value6[0]);
+                    window.sessionStorage.setItem("end4", this.value6[1]);
+
+                }
+                else {
+                    console.log('value3值是:' + this.value6[0])
+                    this.value6=[window.sessionStorage.getItem("start4"),window.sessionStorage.getItem("end4")]
+                    console.log('value3赋值后是:' + this.value6[0])
+                }
+            },
+
             sum() {
+                this.injude()
                 this.getRequest('/getSumData',{}).then(resp => {
                     if (resp.success) {
                         if (resp.data!=null){
@@ -146,6 +312,58 @@
                     window.sessionStorage.setItem("indoor", JSON.stringify(address))
                 })
             },
+
+            //鼠标悬浮
+            addMouseover2 (myMarker, address, name, longitude,latitude,fmapid,point,d, map,title) {
+                let opts = {
+                    width: 260,
+                    height: 120,
+                    title: '==> '+title
+                }
+
+                myMarker.addEventListener('mouseover', e => {
+                    let shopadd = '<table>'
+                    shopadd = shopadd + '<tr><td> 室内地址：'+address+'</td></tr>'
+                    shopadd = shopadd + '<tr><td> 经度：'+longitude+'</td></tr>'
+                    shopadd = shopadd + '<tr><td> 纬度：'+latitude+'</td></tr>'
+                    shopadd = shopadd + '<tr><td> 室内地图ID：' + fmapid + '</td></tr>'
+                    shopadd = shopadd + '<tr><td> 负责人：'+name+'</td></tr>'
+                    shopadd = shopadd + '<tr><td> 室内总人数：'+d+'</td></tr>'
+                    shopadd += '</table>'
+                    let infoWindow = new BMap.InfoWindow(shopadd, opts)
+                    map.openInfoWindow(infoWindow, point)
+                })
+            },
+
+            //鼠标离开
+            addMouseout2 (myMarker, address, name, longitude,latitude,fmapid,point,d, map,title) {
+                let opts = {
+                    width: 260,
+                    height: 120,
+                    title: '==> '+title
+                }
+                myMarker.addEventListener('mouseout', e => {
+                    let shopadd = '<table>'
+                    shopadd = shopadd + '<tr><td> 室内地址：'+address+'</td></tr>'
+                    shopadd = shopadd + '<tr><td> 经度：'+longitude+'</td></tr>'
+                    shopadd = shopadd + '<tr><td> 纬度：'+latitude+'</td></tr>'
+                    shopadd = shopadd + '<tr><td> 室内地图ID：' + fmapid + '</td></tr>'
+                    shopadd = shopadd + '<tr><td> 负责人：'+name+'</td></tr>'
+                    shopadd = shopadd + '<tr><td> 室内总人数：'+d+'</td></tr>'
+                    shopadd += '</table>'
+                    let infoWindow = new BMap.InfoWindow(shopadd, opts)
+                    map.closeInfoWindow(infoWindow, point)
+                })
+            },
+
+            //鼠标点击(实现地图坐标与室内地图的关联)
+            addMouseclick2 (myMarker, address, name, longitude,latitude,fmapid, point,d, map) {
+                myMarker.addEventListener('click', e => {
+                    this.$router.replace("/map");  //页面跳转
+                    window.sessionStorage.setItem("indoor", JSON.stringify(address))
+                })
+            },
+
 
             goto1(){
                 this.$router.replace("/data");  //页面跳转
