@@ -49,16 +49,12 @@
         },
         methods:{
             submitlogin() {
-                this.$refs.loginFrom.validate((valid) => {  //数字校验：有输入才请求接口
+                this.$refs.loginFrom.validate((valid) => {
                     if (valid) {
-                        //alert('submit!');
                         this.postKeyValueRequest('/loginUser', this.loginForm).then(resp =>{
-                            console.log('变json后的响应值是:' + JSON.stringify(resp.data))
-                            //这里只写成功即可，失败的已在请求前做了拦截处理
                             if(resp.success){
-                                console.log('值是:' + resp.success)
-                                window.sessionStorage.setItem("user", JSON.stringify(resp.data));  //保存键值对方便其它页面调用
-                                this.$router.replace('/home'); //页面跳转
+                                window.sessionStorage.setItem("user", JSON.stringify(resp.data));
+                                this.$router.replace('/home');
                                 this.$message.success("欢迎登录")
                             }
                             else{
@@ -72,15 +68,13 @@
                 });
             },
             login() {
-                this.$router.replace('/'); //跳转登录页面
+                this.$router.replace('/');
             },
             register() {
-                this.$router.replace('/register'); //跳转注册页面
+                this.$router.replace('/register');
             },
             changeStatus(value){  //控制显隐性
                 var that =this
-                console.log('改变之后的值是:' + value)
-                console.log('radio改变之后的值是:' + that.loginForm.radio)
             },
         }
     }

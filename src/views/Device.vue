@@ -236,10 +236,9 @@
             this.init()
         },
         methods: {
-            checkJurisdiction () {   //返回区域列表
+            checkJurisdiction () {
                 this.getRequest('/listClassNoPage2',{roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
-                        console.log('data的长度是:' + resp.data.length)
                         for (let i = 0; i < resp.data.length; i++) {
                             let add = {}
                             add.value = i
@@ -254,10 +253,9 @@
                     }
                 })
             },
-            checkJurisdiction2 () {   //返回地图列表
+            checkJurisdiction2 () {
                 this.getRequest('/listMapMamageNoPage',{roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
-                        console.log('data的长度是:' + resp.data.length)
                         for (let i = 0; i < resp.data.length; i++) {
                             let add = {}
                             add.value = i
@@ -276,7 +274,6 @@
             init () {
                 this.getRequest('/listDevice',{start:this.start,size:this.size,roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
-                        console.log('total是:' + resp.data.total)
                         this.total = resp.data.total;
                         this.pages = resp.data.pages;
                         for (let i = 0; i < resp.data.list.length; i++) {
@@ -305,7 +302,6 @@
                 this.list=[],
                 this.getRequest('/listDeviceSearch',{staffdata:this.staffdata,start:this.start,size:this.size,roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
-                        console.log('total是:' + resp.data.total)
                         this.total = resp.data.total;
                         this.pages = resp.data.pages;
                         for (let i = 0; i < resp.data.list.length; i++) {
@@ -396,34 +392,20 @@
                 this.dialogFormVisible2 = false
             },
 
-            /**
-             * 第n页
-             * @param pageNum
-             */
+
             handleCurrentChange(pageNum) {
-                // console.log(`当前页: ${val}`);
                 this.start = pageNum;
                 this.btn2();
             },
-            /**
-             * 每页记录数
-             * @param val
-             */
+
             handleSizeChange(pageSize) {
-                // console.log(`每页 ${val} 条`);
                 this.size = pageSize;
                 this.btn2();
             },
 
-            //通过切换按钮更改设备状态
+
             changeSwitch (row) {
-                console.log("按钮值："+row.devicevalue)
                 this.putRequest('/updateStatus',{status:row.devicevalue,id:row.id,indoorname:row.indoorname}).then(resp => {
-                    //if (resp.success) {
-                        //this.$message.success(resp.data)
-                    //} else {
-                        //this.$message.error(JSON.stringify(resp.data));
-                    //}
                 })
             },
 
@@ -438,7 +420,6 @@
             },
 
             changeSwitch2 () {
-                console.log("按钮值2："+this.valuecotrol)
                 this.putRequest('/updateStatus2',{status:this.valuecotrol}).then(resp => {
                 })
             }

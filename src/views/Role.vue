@@ -48,8 +48,6 @@
             givePermission(row){
                 this.$router.replace("/permission");  //页面跳转
                 this.$store.state.rid = row.rid
-                console.log('值是:' + row.rid)
-                console.log('值是:' + this.$store.state.rid)
             }
         }
     }

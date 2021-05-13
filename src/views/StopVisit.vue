@@ -161,9 +161,9 @@
                 showinput: true,
                 staffdata:'',
                 placeholder: '可以根据区域名模糊查询',
-                total: 0, //数据总数
-                size: 8, //每页的数据条数
-                start: 0, //默认开始页面
+                total: 0,
+                size: 8,
+                start: 0,
                 pages: 1,
                 stop_visit_id:'',
                 dialogFormVisible: false,
@@ -201,10 +201,9 @@
             this.init()
         },
         methods: {
-            checkJurisdiction () {   //返回禁止区域列表
+            checkJurisdiction () {
                 this.getRequest('/listClassNoPageStop',{}).then(resp => {
                     if (resp.success) {
-                        console.log('data的长度是:' + resp.data.length)
                         for (let i = 0; i < resp.data.length; i++) {
                             let add = {}
                             add.value = i
@@ -215,14 +214,12 @@
                             this.form2.address = this.addressdata[0].label
                         }
                     } else {
-                        //this.$message.error(resp.data);
                     }
                 })
             },
-            checkJurisdiction2 () {   //返回地图列表
+            checkJurisdiction2 () {
                 this.getRequest('/listMapMamageNoPage',{roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
-                        console.log('data的长度是:' + resp.data.length)
                         for (let i = 0; i < resp.data.length; i++) {
                             let add = {}
                             add.value = i
@@ -233,7 +230,6 @@
                             this.form2.indoorname = this.indoordata[0].label
                         }
                     } else {
-                        //this.$message.error(resp.data);
                     }
                 })
             },
@@ -241,7 +237,6 @@
             init () {
                 this.getRequest('/listStopVisit',{start:this.start,size:this.size,roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
-                        console.log('total是:' + resp.data.total)
                         this.total = resp.data.total;
                         this.pages = resp.data.pages;
                         for (let i = 0; i < resp.data.list.length; i++) {
@@ -268,7 +263,6 @@
                 this.list=[],
                 this.getRequest('/listStopVisitSearch',{staffdata:this.staffdata,start:this.start,size:this.size,roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
-                        console.log('total是:' + resp.data.total)
                         this.total = resp.data.total;
                         this.pages = resp.data.pages;
                         for (let i = 0; i < resp.data.list.length; i++) {
@@ -373,21 +367,13 @@
                 this.dialogFormVisible2 = false
             },
 
-            /**
-             * 第n页
-             * @param pageNum
-             */
+
             handleCurrentChange(pageNum) {
-                // console.log(`当前页: ${val}`);
                 this.start = pageNum;
                 this.btn2();
             },
-            /**
-             * 每页记录数
-             * @param val
-             */
+
             handleSizeChange(pageSize) {
-                // console.log(`每页 ${val} 条`);
                 this.size = pageSize;
                 this.btn2();
             },

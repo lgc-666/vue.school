@@ -101,9 +101,9 @@
                 placeholder: '可以根据姓名,工号,用户名模糊查询',
                 showinput: true,
                 staffdata:'',
-                total: 0, //数据总数
-                size: 8, //每页的数据条数
-                start: 0, //默认开始页面
+                total: 0,
+                size: 8,
+                start: 0,
                 pages: 1
             }
         },
@@ -113,10 +113,7 @@
         methods: {
             init () {
                 this.getRequest('/listUser',{start:this.start,size:this.size}).then(resp => {
-                    console.log('值是:' + resp.success)
                     if (resp.success) {
-                        console.log('值1是:' + JSON.stringify(resp.data))
-                        console.log('total是:' + resp.data.total)
                         this.total = resp.data.total;
                         this.pages = resp.data.pages;
                         for (let i = 0; i < resp.data.list.length; i++) {
@@ -127,18 +124,14 @@
                             add.username = resp.data.list[i].username
                             add.user=resp.data.list[i]
                             for (let j = 0; j < resp.data.list[i].role.length; j++){
-                                console.log('值4是:' + resp.data.list[i].role[j].rid)
                                 if (resp.data.list[i].role[j].rid===1) {
                                     add.status1 = '1'
-                                    console.log('访客默认开启状态：'+add.status1)
                                 }
                                 else if(resp.data.list[i].role[j].rid===2){
                                     add.status2 = '2'
-                                    console.log('工作人员默认开启状态：'+add.status2)
                                 }
                                 else if(resp.data.list[i].role[j].rid===3){
                                     add.status3 = '3'
-                                    console.log('管理员默认开启状态：'+add.status3)
                                 }
                             }
                             this.list.push(add)
@@ -152,10 +145,7 @@
             btnquery () {
                 this.list=[],
                 this.getRequest('/listUserSearch',{staffdata:this.staffdata,start:this.start,size:this.size}).then(resp => {
-                    console.log('值是:' + resp.success)
                     if (resp.success) {
-                        console.log('值1是:' + JSON.stringify(resp.data))
-                        console.log('total是:' + resp.data.total)
                         this.total = resp.data.total;
                         this.pages = resp.data.pages;
                         for (let i = 0; i < resp.data.list.length; i++) {
@@ -166,18 +156,14 @@
                             add.username = resp.data.list[i].username
                             add.user=resp.data.list[i]
                             for (let j = 0; j < resp.data.list[i].role.length; j++){
-                                console.log('值4是:' + resp.data.list[i].role[j].rid)
                                 if (resp.data.list[i].role[j].rid===1) {
                                     add.status1 = '1'
-                                    console.log('访客默认开启状态：'+add.status1)
                                 }
                                 else if(resp.data.list[i].role[j].rid===2){
                                     add.status2 = '2'
-                                    console.log('工作人员默认开启状态：'+add.status2)
                                 }
                                 else if(resp.data.list[i].role[j].rid===3){
                                     add.status3 = '3'
-                                    console.log('管理员默认开启状态：'+add.status3)
                                 }
                             }
                             this.list.push(add)
@@ -193,7 +179,6 @@
                 this.dialogFormVisible = true
                 this.account=row.username
                 this.user=row.user.uid
-                console.log('值是:' + this.user)
             },
 
             updatePassword(){
@@ -237,21 +222,12 @@
                 }, 100);
             },
 
-            /**
-             * 第n页
-             * @param pageNum
-             */
             handleCurrentChange(pageNum) {
-                // console.log(`当前页: ${val}`);
                 this.start = pageNum;
                 this.btn2();
             },
-            /**
-             * 每页记录数
-             * @param val
-             */
+
             handleSizeChange(pageSize) {
-                // console.log(`每页 ${val} 条`);
                 this.size = pageSize;
                 this.btn2();
             },

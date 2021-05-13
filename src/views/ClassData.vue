@@ -60,27 +60,20 @@
                 value4: '',
                 value5: '',
 
-                //圆环图
                 myChart: '',
                 opinion2: [],
                 opinionData2:[],
-                //opinionData2: [{ value: 1, name: '校园暴力行为' }, { value: 45, name: '正常行为' }, { value: 3, name: '睡觉行为'}, { value: 3, name: '玩手机行为'}],
 
-                //柱状图
                 myChart2:'',
                 opinion: [],
                 opinionData: [],
                 opinionother:[],
-                //opinion: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"],
-                //opinionData: [5, 20, 36, 10, 10, 20],
 
-                //折线图
+
                 myChart3:'',
                 saveopinion3: [],
                 opinion3: [],
                 opinionData3: [],
-                //opinion3: ['近一次', '近两次', '近三次', '近四次'],
-                //opinionData3: [50, 48, 52, 45],
                 pickerOptions2: {
                     disabledDate (time) {
                         const one = 3 * 30 * 24 * 3600 * 1000
@@ -113,8 +106,6 @@
         mounted: function () {
             this.checkJurisdiction2 ()
             this.getdata()  //初始化时间
-            console.log('value3值是:' + this.value3)
-            console.log('value4值是:' + this.value4)
             setTimeout(() => {
              this.drawLine()
              this.drawLine2()
@@ -141,7 +132,6 @@
                 this.indoordata=[]
                 this.getRequest('/listMapMamageNoPage',{roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
-                        console.log('data的长度是:' + resp.data.length)
                         for (let i = 0; i < resp.data.length; i++) {
                             let add = {}
                             add.value = i
@@ -152,7 +142,6 @@
                             this.shopMap = this.indoordata[0].label
                         }
                     } else {
-                        //this.$message.error(resp.data);
                     }
                 })
             },
@@ -165,28 +154,20 @@
                         this.addressdata=[]
                         this.opinion2=[]
                         this.opinionData2=[]
-                        console.log('data是:' + resp.data)
                         for (let i = 0; i < resp.data.length; i++) {
-                            //若是普通区域
                             if(resp.data[i].stopjudge!=1){
-                                console.log('resp.data.adress是:' + resp.data[i].adress)
                                 this.opinion2.push(resp.data[i].adress)
                             }
                         }
-                        //获取每个区域所对应的数据
-                        console.log('opinion2是:' + this.opinion2)
-                        console.log('opinion2.length是:' + this.opinion2.length)
 
                         this.sortStoptime()
 
                         setTimeout(() => {
-                            console.log('opinionData2值是:' + this.opinionData2)
-                            // 指定图表的配置项和数据
                             let option = {
                                 title: {
-                                    text: '当天普通区域停留几率', // 主标题
-                                    subtext: '', // 副标题
-                                    x: 'left' // x轴方向对齐方式
+                                    text: '当天普通区域停留几率',
+                                    subtext: '',
+                                    x: 'left'
                                 },
                                 grid: { containLabel: true },
                                 tooltip: {
@@ -213,8 +194,7 @@
                                     }
                                 ]
                             }
-                            // 3、展示数据
-                            // 使用刚指定的配置项和数据显示图表。
+
                             this.myChart.setOption(option);
                         }, 2000);
 
@@ -225,33 +205,25 @@
             },
 
             drawLine2(){
-                // 1、基于准备好的dom，初始化echarts实例
                 this.myChart2 = this.$echarts.init(document.getElementById('myChart2'))
-                // 2、准备数据和配置项
-                //获取区域列表
+
                 this.getRequest('/listClassNoPage',{indoorname:this.shopMap}).then(resp => {
                     if (resp.success) {
                         this.addressdata=[]
                         this.opinion=[]
                         this.opinionData=[]
                         this.opinionother=[]
-                        console.log('data是:' + resp.data)
+
                         for (let i = 0; i < resp.data.length; i++) {
                             //若是普通区域
                             if(resp.data[i].stopjudge!=1){
-                                console.log('resp.data.adress是:' + resp.data[i].adress)
                                 this.opinion.push(resp.data[i].adress)
                             }
                         }
-                        //获取每个区域所对应的数据
-                        console.log('opinion是:' + this.opinion)
-                        console.log('opinion.length是:' + this.opinion.length)
 
                         this.sortVisit()
 
                         setTimeout(() => {
-                            console.log('opinionData值是:' + this.opinionData)
-                            // 指定图表的配置项和数据
                             let option = {
                                 title: {
                                     text: '当天访问排行'
@@ -272,8 +244,6 @@
                                     data:this.opinionData
                                 }]
                             }
-                            // 3、展示数据
-                            // 使用刚指定的配置项和数据显示图表。
                             this.myChart2.setOption(option);
                         }, 1500);
 
@@ -284,59 +254,49 @@
             },
 
             drawLine3(){
-                // 1、基于准备好的dom，初始化echarts实例
                 this.myChart3 = this.$echarts.init(document.getElementById('myChart3'))
 
-                // 2、准备数据和配置项
                 this.getRequest('/listClassNoPage',{indoorname:this.shopMap}).then(resp => {
                     if (resp.success) {
-                        //先清除定时器
                         if(this.timer!=null){
-                            clearInterval(this.timer);　　// 清除定时器
+                            clearInterval(this.timer);　　
                             this.timer = null;
                         }
 
                         this.opinion3=[]
                         this.addressdata=[]
-                        console.log('data是:' + resp.data)
                         for (let i = 0; i < resp.data.length; i++) {
-                            //若是普通区域
                             if(resp.data[i].stopjudge!=1){
-                                console.log('resp.data.adress是:' + resp.data[i].adress)
                                 this.opinion3.push(resp.data[i].adress)
                             }
                         }
 
 
-                        //设置定时器，每5秒执行一次任务内容(实现定时刷新数据)
                         this.timer = setInterval( () => {
-                            if(window.sessionStorage.getItem("user")!=null) {  //防止退出后仍然继续请求
-                                this.opinionData3= []    //重新初始化
+                            if(window.sessionStorage.getItem("user")!=null) {
+                                this.opinionData3= []
                                 this.saveopinion3=[]
                                 //this.opinion3=[]
                                 this.sortNow()
                             }
                             setTimeout(() => {
-                                console.log('opinionData3值是:' + this.opinionData3)
-                                // 指定图表的配置项和数据
                                 let option = {
                                     title: {
-                                        text: '普通区域人数实时情况', // 主标题
-                                        subtext: '', // 副标题
-                                        x: 'left' // x轴方向对齐方式
+                                        text: '普通区域人数实时情况',
+                                        subtext: '',
+                                        x: 'left'
                                     },
                                     tooltip: {
-                                        trigger: 'axis' // axis   item   none三个值
+                                        trigger: 'axis'
                                     },
                                     xAxis: {
-                                        type: 'category', // 还有其他的type，可以去官网喵两眼哦
-                                        //data: ['近一次', '近两次', '近三次', '近四次', '近五次'], // x轴数据
+                                        type: 'category',
                                         data:this.saveopinion3,
-                                        name: '所在区域' // x轴名称
+                                        name: '所在区域'
                                     },
                                     yAxis: {
                                         type: 'value',
-                                        name: '实时人数' // y轴名称
+                                        name: '实时人数'
                                     },
                                     legend: {
                                         orient: 'vertical',
@@ -347,14 +307,11 @@
                                     series: [
                                         {
                                             name: '实时人数',
-                                            //data: [0, 0, 0],
                                             data:this.opinionData3,
                                             type: 'line'
                                         }
                                     ]
                                 }
-                                // 3、展示数据
-                                // 使用刚指定的配置项和数据显示图表。
                                 this.myChart3.setOption(option);
                                 this.saveopinion3=[]
 
@@ -368,20 +325,18 @@
             },
 
             changeday3 () {
-                console.log('value3值是:' + this.value3)
-                this.opinion2= [],     //重新初始化
+                this.opinion2= [],
                 this.opinionData2= [],
-                this.drawLine()    //更改时间则重新画图
+                this.drawLine()
             },
 
             changeday4 () {
-                console.log('value4值是:' + this.value4)
-                this.opinion= [],     //重新初始化
+                this.opinion= [],
                 this.opinionData= [],
-                this.drawLine2()    //更改时间则重新画图
+                this.drawLine2()
             },
 
-            getdata () {   //获取当前时间
+            getdata () {
                 var aData = new Date()
                 this.value3 = aData.getFullYear() + '-' + (aData.getMonth() + 1) + '-' + aData.getDate()
                 this.value4 = aData.getFullYear() + '-' + (aData.getMonth() + 1) + '-' + aData.getDate()
@@ -423,7 +378,6 @@
                         if (resp.success) {
                                 this.saveopinion3.push(this.opinion3[i])
                                 this.opinionData3.push(resp.data)
-                                console.log('遍历的opinion3值是:' + this.opinion3[i])
                         } else {
                             this.$message.error(resp.data);
                         }

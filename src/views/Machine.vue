@@ -191,10 +191,9 @@
             this.init()
         },
         methods: {
-            checkJurisdiction () {   //返回区域列表
+            checkJurisdiction () {
                 this.getRequest('/listClassNoPage2',{roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
-                        console.log('data的长度是:' + resp.data.length)
                         for (let i = 0; i < resp.data.length; i++) {
                             let add = {}
                             add.value = i
@@ -206,14 +205,12 @@
                         }
 
                     } else {
-                        //this.$message.error(resp.data);
                     }
                 })
             },
-            checkJurisdiction2 () {   //返回地图列表
+            checkJurisdiction2 () {
                 this.getRequest('/listMapMamageNoPage',{roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
-                        console.log('data的长度是:' + resp.data.length)
                         for (let i = 0; i < resp.data.length; i++) {
                             let add = {}
                             add.value = i
@@ -231,7 +228,6 @@
             init () {
                 this.getRequest('/listmachine',{start:this.start,size:this.size,roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
-                        console.log('total是:' + resp.data.total)
                         this.total = resp.data.total;
                         this.pages = resp.data.pages;
                         for (let i = 0; i < resp.data.list.length; i++) {
@@ -257,7 +253,6 @@
                 this.list=[],
                 this.getRequest('/listmachineSearch',{staffdata:this.staffdata,start:this.start,size:this.size,roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
-                        console.log('total是:' + resp.data.total)
                         this.total = resp.data.total;
                         this.pages = resp.data.pages;
                         for (let i = 0; i < resp.data.list.length; i++) {
@@ -295,12 +290,8 @@
                 else{
                     this.form3.leastrssi=row.leastrssi
                 }
-
-                console.log('leastrssi是:' + row.leastrssi)
             },
             handleUpdate(row){
-                console.log('leastrssi是:' + this.form3.leastrssi)
-                console.log('adress是:' + this.form3.adress)
                 this.putRequest('/updatemachine',{ mid:this.mid,machineid:this.form3.machineid, adress:this.form3.adress, indoorname:this.form3.indoorname,x:this.form3.x, status:this.form3.status, y:this.form3.y, beat:this.form3.beat, leastRssi:this.form3.leastrssi}).then(resp => {
                     if (resp.success) {
                         this.$message.success(resp.data)
@@ -353,21 +344,13 @@
                 this.placeholder = '根据设备id查询设备,支持模糊查找'
             },
 
-            /**
-             * 第n页
-             * @param pageNum
-             */
+
             handleCurrentChange(pageNum) {
-                // console.log(`当前页: ${val}`);
                 this.start = pageNum;
                 this.btn2();
             },
-            /**
-             * 每页记录数
-             * @param val
-             */
+
             handleSizeChange(pageSize) {
-                // console.log(`每页 ${val} 条`);
                 this.size = pageSize;
                 this.btn2();
             },

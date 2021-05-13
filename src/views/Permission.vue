@@ -54,9 +54,9 @@
                 showinput: true,
                 staffdata:'',
                 status:'',
-                total: 0, //数据总数
-                size: 8, //每页的数据条数
-                start: 0, //默认开始页面
+                total: 0,
+                size: 8,
+                start: 0,
                 pages: 1
             }
         },
@@ -65,10 +65,8 @@
         },
         methods: {
             init () {
-                console.log('值1是:' + this.$store.state.rid)
                 let rid = this.$store.state.rid
                 this.getRequest('/editRole',{rid:rid,start:this.start,size:this.size}).then(resp => {
-                    console.log('值2是:' + resp.data["all_permission"].list.length)
                     if (resp.success) {
                         this.total = resp.data["all_permission"].total;
                         this.pages = resp.data["all_permission"].pages;
@@ -87,7 +85,6 @@
                                   }
                             }
                             this.list.push(add)
-                            console.log('值1是:' + add.status1)
                         }
                     } else {
                         this.$message.error(JSON.stringify(resp.data));
@@ -119,23 +116,15 @@
             },
             backup(){
                 this.$store.state.rid = ''
-                this.$router.replace("/role");  //页面跳转
+                this.$router.replace("/role");
             },
-            /**
-             * 第n页
-             * @param pageNum
-             */
+
             handleCurrentChange(pageNum) {
-                // console.log(`当前页: ${val}`);
                 this.start = pageNum;
                 this.btn2();
             },
-            /**
-             * 每页记录数
-             * @param val
-             */
+
             handleSizeChange(pageSize) {
-                // console.log(`每页 ${val} 条`);
                 this.size = pageSize;
                 this.btn2();
             },

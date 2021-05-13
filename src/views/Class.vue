@@ -132,9 +132,9 @@
                 showinput: true,
                 staffdata:'',
                 placeholder: '可以根据区域名模糊查询',
-                total: 0, //数据总数
-                size: 8, //每页的数据条数
-                start: 0, //默认开始页面
+                total: 0,
+                size: 8,
+                start: 0,
                 pages: 1,
                 classid:'',
                 dialogFormVisible: false,
@@ -166,10 +166,9 @@
             this.init()
         },
         methods: {
-            checkJurisdiction2 () {   //返回地图列表
+            checkJurisdiction2 () {
                 this.getRequest('/listMapMamageNoPage',{roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
-                        console.log('data的长度是:' + resp.data.length)
                         for (let i = 0; i < resp.data.length; i++) {
                             let add = {}
                             add.value = i
@@ -188,7 +187,6 @@
             init () {
                 this.getRequest('/listClass',{start:this.start,size:this.size,roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
-                        console.log('total是:' + resp.data.total)
                         this.total = resp.data.total;
                         this.pages = resp.data.pages;
                         for (let i = 0; i < resp.data.list.length; i++) {
@@ -213,7 +211,6 @@
                 this.list=[],
                 this.getRequest('/listClassSearch',{staffdata:this.staffdata,start:this.start,size:this.size,roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
-                        console.log('total是:' + resp.data.total)
                         this.total = resp.data.total;
                         this.pages = resp.data.pages;
                         for (let i = 0; i < resp.data.list.length; i++) {
@@ -303,21 +300,13 @@
                 this.dialogFormVisible2 = false
             },
 
-            /**
-             * 第n页
-             * @param pageNum
-             */
+
             handleCurrentChange(pageNum) {
-                // console.log(`当前页: ${val}`);
                 this.start = pageNum;
                 this.btn2();
             },
-            /**
-             * 每页记录数
-             * @param val
-             */
+
             handleSizeChange(pageSize) {
-                // console.log(`每页 ${val} 条`);
                 this.size = pageSize;
                 this.btn2();
             },

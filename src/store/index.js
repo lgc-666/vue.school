@@ -9,7 +9,7 @@ export default new Vuex.Store({
           shopflag: false,
       },
       mutations:{
-          initRoutes(state, data){  //只传data即可
+          initRoutes(state, data){
               state.routes = data;
           },
           addshopflag (state, user) {

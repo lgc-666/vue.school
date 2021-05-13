@@ -91,28 +91,24 @@
         },
         methods:{
             submitregister() {
-                this.$refs.registerForm.validate((valid) => {   //数字校验：有输入才请求接口
+                this.$refs.registerForm.validate((valid) => {
                     if (valid) {
-                        //alert('submit!');
                         this.postKeyValueRequest('/register', this.registerForm).then(resp =>{
                             if(resp){
                                 this.$message.success(JSON.stringify(resp.data));
-                                this.$router.replace('/'); //页面跳转
+                                this.$router.replace('/');
                             }
                         })
                     } else {
                         this.$message.error('请输入所有字段');
-                        console.log('error submit!!');
                         return false;
                     }
                 });
             },
-            resetForm() { //重置
+            resetForm() {
                 this.$refs.registerForm.resetFields();
             },
-            changeStatus(value){  //控制显隐性
-                console.log('改变之后的值是:' + value)
-                console.log('raido改变之后的值是:' + this.registerForm.radio)
+            changeStatus(value){
                 if (value=='1'){
                     this.btnstatus=false
                 }
@@ -122,10 +118,10 @@
                 }
             },
             login() {
-                this.$router.replace('/'); //跳转登录页面
+                this.$router.replace('/');
             },
             register() {
-                this.$router.replace('/register'); //跳转注册页面
+                this.$router.replace('/register');
             }
         },
         computed: {

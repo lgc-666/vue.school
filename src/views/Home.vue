@@ -108,8 +108,8 @@
                     personRole: ''
                 }],
                 personUid:'',
-                size: 8, //每页的数据条数
-                start: 0, //默认开始页面
+                size: 8,
+                start: 0,
                 centerDialogVisible: false,
                 user:JSON.parse(window.sessionStorage.getItem("user")),
             }
@@ -123,7 +123,6 @@
              }
         },
         methods:{
-            //cmd命令控制
             commandHandler(cmd){
                 if(cmd=='logout'){
                     this.$confirm('此操作将注销登录, 是否继续?', '提示', {
@@ -146,7 +145,6 @@
                 else if (cmd=='userinfo'){
                         this.list=[],
                         this.getRequest('/listUserSearch',{staffdata:this.user.username,start:this.start,size:this.size}).then(resp => {
-                            console.log('值是:' + resp.success)
                             if (resp.success) {
                                     let add = {}
                                     add.personName = resp.data.list[0].username;
@@ -164,7 +162,6 @@
                 else if (cmd=='setting'){
                     this.list=[],
                         this.getRequest('/listUserSearch',{staffdata:this.user.username,start:this.start,size:this.size}).then(resp => {
-                            console.log('值是:' + resp.success)
                             if (resp.success) {
                                 this.personUid = resp.data.list[0].uid;
                             } else {
@@ -176,7 +173,6 @@
                 }
             },
             memuClick(index){
-                console.log(index);
                 this.$router.push(index);
             },
 

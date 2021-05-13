@@ -296,7 +296,7 @@
                 addressdata: [],
                 addressdatabystaff: [],
                 timer: null,
-                flaghaveshop: false, // 判断这人有没有店铺
+                flaghaveshop: false,
                 user:JSON.parse(window.sessionStorage.getItem("user"))
             }
         },
@@ -311,17 +311,16 @@
             this.destroyed()
         },
         methods: {
-            checkJurisdiction2 () {   //返回地图列表
+            checkJurisdiction2 () {
                 this.getRequest('/listMapMamageNoPage',{roledesc:this.user.roledesc,username:this.user.username}).then(resp => {
                     if (resp.success) {
-                        console.log('data的长度是:' + resp.data.length)
                         for (let i = 0; i < resp.data.length; i++) {
                             let add = {}
                             add.value = i
                             add.label = resp.data[i].indoorname
                             this.indoordata.push(add)
                         }
-                         //初始化值
+
                         if(window.sessionStorage.getItem("address2")!=null&&window.sessionStorage.getItem("address2")!=''){
                             this.shopMap = JSON.parse(window.sessionStorage.getItem('address2'))
                         }
@@ -332,7 +331,6 @@
                             }
                         }
                     } else {
-                        //this.$message.error(resp.data);
                     }
                 })
             },
@@ -346,11 +344,10 @@
                 this.init()
             },
 
-            checkJurisdiction () {   //返回区域列表
+            checkJurisdiction () {
                 this.addressdata=[]
                 this.getRequest('/listClassNoPage',{indoorname:this.shopMap}).then(resp => {
                     if (resp.success) {
-                        console.log('data的长度是:' + resp.data.length)
                         for (let i = 0; i < resp.data.length; i++) {
                             let add = {}
                             add.value = i
@@ -365,12 +362,9 @@
                     }
                 })
             },
-            gettime () {    //设置定时器，每5秒执行一次任务内容
+            gettime () {
                 this.timer = setInterval( () => {
-                    console.log('shopMap是:' + this.shopMap)
-                    console.log('shopaddress2是:' + this.shopaddress2)
                     if(this.shopMap===''||this.shopaddress2===''||this.value2===''){
-                         //啥也不干
                     }
                     else{
                         this.getcustomerdata()
@@ -380,15 +374,15 @@
                     }
                 }, 5000)
             },
-            init () {  //初始化
-                if (this.$store.state.shopflag === false) { // 刚从登录页面过来需要弹窗
+            init () {
+                if (this.$store.state.shopflag === false) {
                     this.dialogVisible2 = true
                     this.dialogVisible = true
                     if(this.addressdata.length!=0){
                         this.shopaddress2 = this.addressdata[0].label
                     }
                 } else {
-                    this.dialogVisible = false // 表示登录过了无需在弹窗
+                    this.dialogVisible = false
                     this.dialogVisible2 = false
                     this.shopaddress2 = window.sessionStorage.getItem('address')
                     this.shopMap = JSON.parse(window.sessionStorage.getItem('address2'))
@@ -396,12 +390,9 @@
                 }
             },
 
-            getcustomerdata () {//获取区域数据统计值、小时统计值(传过来的是Map)
-                console.log('所选室内场所是:' + this.shopMap)
+            getcustomerdata () {
                 this.getRequest('/getMainData',{address: this.shopaddress2,dateTime: this.value2,indoorname:this.shopMap}).then(resp => {
                     if (resp.success) {
-                        console.log('data进入值是:' + JSON.stringify(resp.data))
-                        console.log('data进入值22是:' + resp.data.in_class_number)
                         this.consumerNumber = resp.data.in_class_number
                         this.newConsumer = resp.data.new_student
                         this.jmpOut = resp.data.jmpOut
@@ -412,10 +403,9 @@
                 })
             },
 
-            getChartdata () { //获取区域数据小时进入访问量统计值
+            getChartdata () {
                 this.getRequest('/getInCustomerPerHour',{address: this.shopaddress2,dateTime: this.value2,indoorname:this.shopMap}).then(resp => {
                     if (resp.success) {
-                        console.log('data是:' + resp.data)
                         this.chartData1 = {
                             columns: ['小时', '每个小时的访问量'],
                             rows: []
@@ -436,10 +426,9 @@
                 })
             },
 
-            getPassengerflow () {//获取区域数据小时人流量统计值
+            getPassengerflow () {
                 this.getRequest('/getCustomerPerHour',{address: this.shopaddress2,dateTime: this.value,indoorname:this.shopMap}).then(resp => {
                     if (resp.success) {
-                        console.log('data是:' + resp.data)
                         this.chartData = {
                             columns: ['小时', '每个小时的人流量'],
                             rows: []
@@ -460,11 +449,10 @@
                 })
             },
 
-            Refresh () {  //新添加的区域加入选择列表
+            Refresh () {
                 this.getRequest('/listClassNoPage',{indoorname:this.shopMap}).then(resp => {
                     if (resp.success) {
                         this.addressdata=[]
-                        console.log('data是:' + resp.data)
                         for (let i = 0; i < resp.data.length; i++) {
                             let add = {}
                             add.value = i
@@ -477,14 +465,14 @@
                 })
             },
 
-            chooceaddress () {  //选择区域
+            chooceaddress () {
                 this.$store.commit('addshopflag', {shopflag: true})
                 window.sessionStorage.setItem('address', this.shopaddress2)
                 this.dialogVisible = false
                 this.gettoday()
             },
 
-            chooceaddress2 () {  //选择室内地图
+            chooceaddress2 () {
                 window.sessionStorage.setItem('address2', JSON.stringify(this.shopMap))
                 this.dialogVisible2 = false
                 setTimeout(() => {
@@ -496,12 +484,12 @@
                 clearInterval(this.timer)
             },
 
-            changeaddress () {   //通过选择按钮改变所选区域
+            changeaddress () {
                 window.sessionStorage.setItem('address', this.shopaddress2)
                 this.gettoday()
             },
 
-            changeaddress2 () {   //通过选择按钮改变所选地图
+            changeaddress2 () {
                 window.sessionStorage.setItem('address2', JSON.stringify(this.shopMap))
                 setTimeout(() => {
                     this.checkJurisdiction()
@@ -509,13 +497,13 @@
                 this.gettoday()
             },
 
-            gettoday () {  //获取今天的数据
+            gettoday () {
                 this.getdata()
                 this.getcustomerdata()
                 this.getChartdata()
                 this.getPassengerflow()
             },
-            getdata () {   //获取当前时间
+            getdata () {
                 var aData = new Date()
                 this.value = aData.getFullYear() + '-' + (aData.getMonth() + 1) + '-' + aData.getDate()
                 this.value2 = aData.getFullYear() + '-' + (aData.getMonth() + 1) + '-' + aData.getDate()

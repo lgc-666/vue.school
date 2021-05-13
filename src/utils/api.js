@@ -43,7 +43,7 @@ axios.interceptors.response.use(success=>{
 
 let base = '';
 
-export const postKeyValueRequest=(url,params)=>{  //只是登录用（Spring Security 中默认的登录数据格式就是 key/value 的形式）
+export const postKeyValueRequest=(url,params)=>{
     return axios({
         method:'post',
         url:`${base}${url}`,
@@ -62,7 +62,6 @@ export const postKeyValueRequest=(url,params)=>{  //只是登录用（Spring Sec
 }
 
 export const putRequest=(url,parms)=>{
-    console.log('是:' + parms)
     return axios({
         method: 'put',
         url: `${base}${url}`,
